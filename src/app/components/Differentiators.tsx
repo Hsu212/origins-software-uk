@@ -142,7 +142,7 @@ function LiveMetrics() {
   const [metrics, setMetrics] = useState({
     uptime: '99.99%',
     latency: '42ms',
-    deployments: '23',
+    deployments: 23,
     incidents: '0',
     coverage: '94%',
     vulnerabilities: '0'
