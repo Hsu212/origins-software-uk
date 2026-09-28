@@ -1,0 +1,14 @@
+import LegalPage from '@/app/components/LegalPage';
+
+export default function PrivacyPage() {
+  return <LegalPage title="Privacy Policy" updated="28 September 2026" intro="This template explains how Origins Ltd. may collect, use and protect personal information when you visit our website, contact us, work with us, or use a client portal. Replace the placeholders and have the final policy reviewed for the jurisdictions in which you operate." sections={[
+    { heading: '1. Who we are', body: <p>Origins Ltd. is the organisation responsible for this website and, where applicable, for personal information processed in connection with our services. Registered-company details should be completed on our Company page.</p> },
+    { heading: '2. Information we collect', body: <p>We may receive contact details, company details, project information, account credentials, billing information, communications, technical information such as browser/device data, and information you choose to submit through forms or support channels.</p> },
+    { heading: '3. How we use information', body: <p>Typical purposes include responding to enquiries, preparing quotations, delivering contracted services, managing client accounts, processing payments through payment providers, operating and securing our services, maintaining business records, and complying with legal obligations.</p> },
+    { heading: '4. Lawful basis and choices', body: <p>Where applicable, processing may rely on contract, legitimate interests, consent, or legal obligations. Where we rely on consent, you can withdraw it. Your local privacy rights may include access, correction, deletion, restriction, objection and data portability.</p> },
+    { heading: '5. Sharing information', body: <p>We may use trusted providers for hosting, analytics, communications, authentication, storage, monitoring and payment processing. We disclose information only as needed for the relevant purpose, contract or legal requirement.</p> },
+    { heading: '6. Retention and security', body: <p>We retain information for as long as reasonably necessary for the purpose collected, contractual records, legitimate business needs and legal requirements. We use access controls, secure transport, appropriate authentication and operational safeguards, but no system can be guaranteed completely secure.</p> },
+    { heading: '7. International transfers', body: <p>Some providers may process information in countries outside your home jurisdiction. Where required, appropriate transfer mechanisms and contractual safeguards should be used.</p> },
+    { heading: '8. Contact', body: <p>For privacy questions or requests, use <a href="mailto:privacy@originsltd.com">privacy@originsltd.com</a>. Add the relevant supervisory authority details for your main operating jurisdiction before publishing.</p> },
+  ]} />;
+}
