@@ -9,7 +9,7 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "Origins Ltd. — Digital engineering for ambitious teams",
   description: "Origins builds dependable digital products, software systems, infrastructure and AI-enabled workflows for ambitious teams.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://originsltd.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://origins-software.com'),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -61,7 +61,7 @@ export default function PremiumLanding() {
       <header className="landing-header">
         <div className="landing-header-inner">
           <Link href="#home" className="brand-mark" onClick={closeMenu} aria-label="Origins home">
-            <span className="brand-icon">O</span>
+            <img src="/origins-logo.png" alt="Origins" className="landing-logo" />
             <span className="brand-word">ORIGINS</span>
           </Link>
 
@@ -81,6 +81,7 @@ export default function PremiumLanding() {
             <Link href="/services" onClick={closeMenu}>Services</Link>
             <Link href="/process" onClick={closeMenu}>Process</Link>
             <Link href="/about" onClick={closeMenu}>About</Link>
+            <a href={process.env.NEXT_PUBLIC_CLIENT_PORTAL_URL || 'https://portal.origins-software.com'} className="nav-portal" onClick={closeMenu}>Client portal <span>↗</span></a>
             <Link href="#contact" className="nav-cta" onClick={closeMenu}>Start a project <span>↗</span></Link>
           </nav>
         </div>
