@@ -1,12 +1,31 @@
 import LegalPage from '@/app/components/LegalPage';
 
 export default function SecurityPage() {
-  return <LegalPage title="Security" updated="28 September 2026" intro="Security is part of delivery and operations. This page describes the control areas clients and partners may reasonably expect; exact controls should reflect the production environment and any contractual security commitments." sections={[
-    { heading: '1. Access control', body: <p>Access should follow least privilege, role-based permissions and removal of unnecessary access. Administrative access should use strong authentication and protected credentials.</p> },
-    { heading: '2. Data protection', body: <p>Use encrypted transport, appropriate encryption at rest where supported, controlled secrets, backups and environment separation for production systems.</p> },
-    { heading: '3. Application security', body: <p>Development should include dependency review, input validation, authentication and authorisation checks, secure headers, logging and testing appropriate to the system risk.</p> },
-    { heading: '4. Payments', body: <p>Payment-card details should be collected through a suitable payment provider rather than stored directly in Origins application databases unless a specific compliant architecture requires otherwise.</p> },
-    { heading: '5. Vulnerability reporting', body: <p>Report suspected security issues to <a href="mailto:security@originsltd.com">security@originsltd.com</a>. Include enough detail to reproduce the issue and avoid accessing, altering or retaining data beyond what is necessary to demonstrate the issue.</p> },
-    { heading: '6. Incident response', body: <p>Production incidents should be triaged, contained, investigated, remediated and communicated according to their impact and the applicable contractual or legal requirements.</p> },
-  ]} />;
+  return <LegalPage 
+    title="Data Security and Infrastructure" 
+    updated="28 September 2026" 
+    intro="Origins Ltd. UK implements robust technical and organizational security controls to protect digital assets, personal data, and infrastructure against accidental loss, unauthorized access, alteration, or disclosure[cite: 1]. This page outlines the operational security standards deployed across our environments." 
+    sections={[
+      { 
+        heading: '1. Access Governance and Control', 
+        body: <p>Access to personal data and internal systems is restricted to authorized engineers and operational personnel on a strict "need-to-know" basis[cite: 1]. All administrative and operational access is heavily protected by mandatory multi-factor authentication (MFA) and role-based access control (RBAC)[cite: 1].</p> 
+      },
+      { 
+        heading: '2. Data Protection and Encryption', 
+        body: <p>Origins enforces strict encryption standards across its operations: all data in transit across public networks is encrypted using Transport Layer Security (TLS 1.3), and all data at rest is secured using the Advanced Encryption Standard (AES-256)[cite: 1].</p> 
+      },
+      { 
+        heading: '3. Infrastructure Isolation', 
+        body: <p>To prevent cross-contamination or unauthorized inspection, all client project assets, custom artificial intelligence datasets, and proprietary source code are strictly ring-fenced within secure, isolated environments[cite: 1].</p> 
+      },
+      { 
+        heading: '4. Vulnerability Probing and Reporting', 
+        body: <p>Users are strictly prohibited from attempting to breach, test, or probe the security features, firewalls, or authentication mechanisms of the Website or linked cloud systems[cite: 1]. Authorized or suspected security issues should be immediately reported to our security team, avoiding any alteration or retention of data beyond what is necessary to demonstrate the vulnerability.</p> 
+      },
+      { 
+        heading: '5. Incident Response and Enforcement', 
+        body: <p>Origins reserves the right to immediately suspend or terminate access to our infrastructure without prior liability in the event of suspected unauthorized security activity or a breach of our security protocols[cite: 1].</p> 
+      },
+    ]} 
+  />;
 }
