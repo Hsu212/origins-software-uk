@@ -10,7 +10,8 @@ export function CursorFollower() {
   const [trail, setTrail] = useState<Array<{ x: number; y: number; id: number }>>([]);
 
   useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
+    const handleMove = (event: Event) => {
+      const e = event as MouseEvent;
       x.set(e.clientX);
       y.set(e.clientY);
     };
@@ -27,9 +28,10 @@ export function CursorFollower() {
   }, [x]);
 
   const trailElements = trail.map((point, i) => {
-    const scale = useSpring(useTransform(i, [0, trail.length - 1], [1, 0.1]), { stiffness: 300, damping: 30 });
-    const opacity = useSpring(useTransform(i, [0, trail.length - 1], [0.6, 0]), { stiffness: 300, damping: 30 });
-    
+    const progress = trail.length > 1 ? i / (trail.length - 1) : 0;
+    const scale = 1 - progress * 0.9;
+    const opacity = 0.6 - progress * 0.6;
+
     return (
       <motion.div
         key={point.id}
@@ -261,7 +263,8 @@ export function TiltCard({ children, className = '', maxTilt = 15 }: {
     const element = ref.current;
     if (!element) return;
 
-    const handleMove = (e: MouseEvent) => {
+    const handleMove = (event: Event) => {
+      const e = event as MouseEvent;
       const rect = element.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
@@ -289,7 +292,9 @@ export function TiltCard({ children, className = '', maxTilt = 15 }: {
       ref={ref}
       className={`relative rounded-2xl bg-forest-light/50 backdrop-blur-sm border border-white/10 overflow-hidden ${className}`}
       style={{
-        transform: `perspective(1000px) rotateX(${y.get()}deg) rotateY(${x.get()}deg)`,
+        rotateX: y,
+        rotateY: x,
+        transformPerspective: 1000,
         transformStyle: 'preserve-3d',
       }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -305,7 +310,8 @@ export function TiltCard({ children, className = '', maxTilt = 15 }: {
       <motion.div
         className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
         style={{
-          transform: `translateX(${(x.get() / maxTilt) * 100}%) translateZ(10px)`,
+          x: useTransform(x, [-maxTilt, maxTilt], ['-20%', '20%']),
+          z: 10,
         }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       />
