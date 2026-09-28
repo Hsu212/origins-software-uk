@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Cursor follower with trail
 export function CursorFollower() {
@@ -86,7 +86,7 @@ export function MagneticButton({ children, href, className = '', ...props }: {
   if (href) {
     return (
       <motion.a
-        ref={ref}
+        ref={ref as React.Ref<HTMLAnchorElement>}
         href={href}
         style={{ x, y }}
         className={`relative inline-flex items-center justify-center overflow-hidden ${className}`}
@@ -102,7 +102,7 @@ export function MagneticButton({ children, href, className = '', ...props }: {
 
   return (
     <motion.button
-      ref={ref}
+      ref={ref as React.Ref<HTMLButtonElement>}
       style={{ x, y }}
       className={`relative inline-flex items-center justify-center overflow-hidden ${className}`}
       whileHover={{ scale: 1.05 }}
@@ -123,8 +123,7 @@ export function ScrollProgress() {
   return (
     <motion.div
       className="fixed top-0 left-0 h-1 bg-gradient-to-r from-emerald to-emerald-dim z-50 origin-left"
-      style={{ transformOrigin: 'left center' }}
-      animate={{ scaleX: progress }}
+      style={{ transformOrigin: 'left center', scaleX: progress }}
     />
   );
 }
@@ -206,7 +205,7 @@ export function Typewriter({
         setText(prev => prev.slice(0, -1));
         if (text.length === 0) {
           setIsDeleting(false);
-          setTextIndex((prev + 1) % texts.length);
+          setTextIndex(prev => (prev + 1) % texts.length);
           setTimeout(type, 500);
         } else {
           setTimeout(type, deleteSpeed);
@@ -232,7 +231,14 @@ export function Parallax({ children, speed = 0.5, className = '' }: {
   className?: string;
 }) {
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, window.innerHeight], [0, window.innerHeight * speed]);
+  // Using an effect or checking window to prevent SSR errors on window.innerHeight
+  const [innerHeight, setInnerHeight] = useState(1000);
+  
+  useEffect(() => {
+    setInnerHeight(window.innerHeight);
+  }, []);
+
+  const y = useTransform(scrollY, [0, innerHeight], [0, innerHeight * speed]);
 
   return (
     <motion.div className={className} style={{ y }}>
