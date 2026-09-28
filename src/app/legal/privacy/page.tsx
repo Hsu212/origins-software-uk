@@ -1,14 +1,43 @@
 import LegalPage from '@/app/components/LegalPage';
 
 export default function PrivacyPage() {
-  return <LegalPage title="Privacy Policy" updated="28 September 2026" intro="This template explains how Origins Ltd. may collect, use and protect personal information when you visit our website, contact us, work with us, or use a client portal. Replace the placeholders and have the final policy reviewed for the jurisdictions in which you operate." sections={[
-    { heading: '1. Who we are', body: <p>Origins Ltd. is the organisation responsible for this website and, where applicable, for personal information processed in connection with our services. Registered-company details should be completed on our Company page.</p> },
-    { heading: '2. Information we collect', body: <p>We may receive contact details, company details, project information, account credentials, billing information, communications, technical information such as browser/device data, and information you choose to submit through forms or support channels.</p> },
-    { heading: '3. How we use information', body: <p>Typical purposes include responding to enquiries, preparing quotations, delivering contracted services, managing client accounts, processing payments through payment providers, operating and securing our services, maintaining business records, and complying with legal obligations.</p> },
-    { heading: '4. Lawful basis and choices', body: <p>Where applicable, processing may rely on contract, legitimate interests, consent, or legal obligations. Where we rely on consent, you can withdraw it. Your local privacy rights may include access, correction, deletion, restriction, objection and data portability.</p> },
-    { heading: '5. Sharing information', body: <p>We may use trusted providers for hosting, analytics, communications, authentication, storage, monitoring and payment processing. We disclose information only as needed for the relevant purpose, contract or legal requirement.</p> },
-    { heading: '6. Retention and security', body: <p>We retain information for as long as reasonably necessary for the purpose collected, contractual records, legitimate business needs and legal requirements. We use access controls, secure transport, appropriate authentication and operational safeguards, but no system can be guaranteed completely secure.</p> },
-    { heading: '7. International transfers', body: <p>Some providers may process information in countries outside your home jurisdiction. Where required, appropriate transfer mechanisms and contractual safeguards should be used.</p> },
-    { heading: '8. Contact', body: <p>For privacy questions or requests, use <a href="mailto:privacy@originsltd.com">privacy@originsltd.com</a>. Add the relevant supervisory authority details for your main operating jurisdiction before publishing.</p> },
-  ]} />;
+  return <LegalPage 
+    title="Master Privacy Policy" 
+    updated="28 September 2026" 
+    intro="Origins Ltd. UK is dedicated to protecting the privacy, confidentiality, and security of personal data entrusted to us by clients, partners, website visitors, and service users[cite: 1]. This Privacy Policy outlines our data processing standards in strict accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018[cite: 1]." 
+    sections={[
+      { 
+        heading: '1. Data We Collect', 
+        body: <p>We collect Personal Identity & Contact Information (name, corporate email, phone number, job title) through web forms or support inquiries[cite: 1]. We also automatically collect Technical & Usage Data, including IP addresses, browser types, and clickstream data, as well as Communication Records and Client Project Assets such as source code or data inputs for custom engineering[cite: 1].</p> 
+      },
+      { 
+        heading: '2. Legal Basis and Purpose of Processing', 
+        body: <p>We process personal data only when an established legal basis applies under UK GDPR Article 6[cite: 1]. This includes processing for Service Provision and Contract Execution (Article 6(1)(b)), System Maintenance & Security (Article 6(1)(f) - Legitimate Interests), Direct Marketing (Article 6(1)(a) - Express Consent), and Legal & Regulatory Compliance (Article 6(1)(c))[cite: 1].</p> 
+      },
+      { 
+        heading: '3. Data Sharing, Disclosures, and Third Parties', 
+        body: <p>We engage trusted third-party vendors for hosting, compute infrastructure, and analytics, all operating under formal Data Processing Agreements (DPAs)[cite: 1]. We may disclose data to UK law enforcement or regulatory bodies when legally compelled[cite: 1]. Personal information is never sold, rented, leased, or traded for commercial purposes[cite: 1].</p> 
+      },
+      { 
+        heading: '4. Data Security and Encryption Infrastructure', 
+        body: <p>All data in transit across public networks is encrypted using Transport Layer Security (TLS 1.3), and data at rest is encrypted using Advanced Encryption Standard (AES-256)[cite: 1]. Access to personal data is restricted by multi-factor authentication (MFA) and role-based access control (RBAC)[cite: 1]. Client project assets and custom AI datasets are ring-fenced within secure, isolated environments[cite: 1].</p> 
+      },
+      { 
+        heading: '5. Retention and Anonymization', 
+        body: <p>Personal data is retained only for the minimum period necessary to fulfill specific operational purposes or satisfy legal reporting requirements[cite: 1]. Upon expiration, data is permanently deleted from primary and backup systems or fully anonymized[cite: 1].</p> 
+      },
+      { 
+        heading: '6. Your Rights under UK GDPR', 
+        body: <p>Under the UK Data Protection Act 2018 and UK GDPR, individuals have the Right of Access, Right to Rectification, Right to Erasure ("Right to be Forgotten"), Right to Restriction, Right to Data Portability, and the Right to Withdraw Consent at any time[cite: 1]. To exercise these rights, individuals can contact our Data Protection Lead[cite: 1].</p> 
+      },
+      { 
+        heading: '7. Children\'s Privacy Protection', 
+        body: <p>Our website and services are tailored exclusively for legal commercial entities and adult business professionals[cite: 1]. We do not intentionally or knowingly collect, process, or solicit personal data from individuals under 13 years of age[cite: 1].</p> 
+      },
+      { 
+        heading: '8. Contact Information', 
+        body: <p>For inquiries, exercise of data subject rights, or regulatory escalation, please contact our legal team at <a href="mailto:privacy@originsltd.co.uk">privacy@originsltd.co.uk</a> or by mail to the Legal Compliance Department, Origins Ltd. UK[cite: 1].</p> 
+      },
+    ]} 
+  />;
 }
