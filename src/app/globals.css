@@ -663,6 +663,8 @@
 
 .modern-principle-card:hover::before {
   opacity: 1;
+
+}  
 /* Origins brand logo */
 .site-logo {
   width: 34px;
