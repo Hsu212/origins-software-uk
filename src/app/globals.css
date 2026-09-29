@@ -749,3 +749,71 @@
     padding-top: calc(78px + 16px);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Modern Company Facts Card Design
+   -------------------------------------------------------------------------- */
+
+.modern-facts-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01));
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modern-facts-card .fact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--landing-line, rgba(255, 255, 255, 0.08));
+  transition: background-color 0.2s ease;
+}
+
+.modern-facts-card .fact-row:last-child {
+  border-bottom: none;
+}
+
+.modern-facts-card .fact-row:hover {
+  background-color: rgba(32, 228, 141, 0.03);
+}
+
+.modern-facts-card .fact-label {
+  color: var(--landing-muted, #9aaba3);
+  font-size: 13px;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.04em;
+}
+
+.modern-facts-card .fact-value {
+  text-align: right;
+  color: #f3f7f5;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modern-facts-card .fact-value a {
+  color: var(--landing-green, #20e48d);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.modern-facts-card .fact-value a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .modern-facts-card .fact-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 16px 18px;
+  }
+  .modern-facts-card .fact-value {
+    text-align: left;
+  }
+}
