@@ -868,3 +868,80 @@
   bottom: 20px;
   width: 1px;
 }
+
+/* --------------------------------------------------------------------------
+   Modern Typographic Split Layout (Non-Card Style)
+   -------------------------------------------------------------------------- */
+
+.working-with-us-section {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.working-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+}
+
+.working-header h2 {
+  max-width: 700px;
+  margin: 10px 0 0 0;
+}
+
+.modern-action-btn {
+  white-space: nowrap;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.modern-action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.working-split-layout {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 48px;
+  border-top: 1px solid var(--landing-line, rgba(255, 255, 255, 0.1));
+  padding-top: 40px;
+}
+
+.working-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.working-indicator {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--landing-green, #20e48d);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.working-block p {
+  margin: 0;
+  color: var(--landing-muted, #9aaba3);
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 520px;
+}
+
+@media (max-width: 980px) {
+  .working-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .working-split-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
