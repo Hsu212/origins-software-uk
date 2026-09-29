@@ -720,3 +720,30 @@
   }
 
 }
+
+/* --------------------------------------------------------------------------
+   Sticky Header Overlap Fix for Sub-pages
+   -------------------------------------------------------------------------- */
+
+.company-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg-primary, #081711);
+  backdrop-filter: blur(12px);
+}
+
+/* Ensure sub-page heroes and containers clear the sticky header height (72px) */
+.inner-hero {
+  padding-top: calc(120px + 20px);
+}
+
+.legal-page {
+  padding-top: calc(90px + 20px);
+}
+
+@media (max-width: 720px) {
+  .inner-hero {
+    padding-top: calc(78px + 16px);
+  }
+}
