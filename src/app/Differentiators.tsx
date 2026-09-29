@@ -142,7 +142,7 @@ function LiveMetrics() {
   const [metrics, setMetrics] = useState({
     uptime: '99.99%',
     latency: '42ms',
-    deployments: '23',
+    deployments: 23,
     incidents: '0',
     coverage: '94%',
     vulnerabilities: '0'
@@ -153,7 +153,7 @@ function LiveMetrics() {
       setMetrics(prev => ({
         ...prev,
         latency: `${Math.max(35, Math.min(85, parseInt(prev.latency) + Math.floor(Math.random() * 10) - 5))}ms`,
-        deployments: parseInt(prev.deployments) + (Math.random() > 0.95 ? 1 : 0),
+        deployments: prev.deployments + (Math.random() > 0.95 ? 1 : 0),
         coverage: `${Math.min(99, Math.max(90, parseInt(prev.coverage) + Math.floor(Math.random() * 3) - 1))}%`
       }));
     }, 8000);

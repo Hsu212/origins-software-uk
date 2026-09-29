@@ -1,10 +1,31 @@
 import LegalPage from '@/app/components/LegalPage';
 
 export default function AcceptableUsePage() {
-  return <LegalPage title="Acceptable Use" updated="28 September 2026" intro="These rules apply to website, account and portal features made available by Origins. Project agreements may impose additional controls for a particular system." sections={[
-    { heading: '1. Prohibited activity', body: <p>Do not use Origins services to commit unlawful activity, distribute malware, attempt unauthorised access, disrupt infrastructure, send abusive bulk messages, infringe intellectual property rights, or knowingly introduce harmful content or code.</p> },
-    { heading: '2. Account security', body: <p>Keep credentials confidential, use strong authentication where available, and notify us promptly if you suspect an account or session has been compromised.</p> },
-    { heading: '3. Client content', body: <p>You remain responsible for having the rights and permissions needed for content, data and instructions you provide. Do not submit data that you are not authorised to process.</p> },
-    { heading: '4. Enforcement', body: <p>We may restrict or suspend access when reasonably necessary to protect people, systems, data, or comply with law or contract.</p> },
-  ]} />;
+  return <LegalPage 
+    title="Acceptable Use Policy (AUP)" 
+    updated="28 September 2026" 
+    intro="This Acceptable Use Policy (AUP) governs the access to and use of any website, development portal, API endpoint, or digital service hosted or provided by Origins Ltd. UK[cite: 1]. All users must strictly adhere to these operational guidelines[cite: 1]." 
+    sections={[
+      { 
+        heading: '1. Permitted Business Use', 
+        body: <p>Users are permitted to access and utilize our services strictly for lawful, legitimate business-related purposes that directly align with Origins' mission of delivering high-performance Web architecture, DevSecOps security auditing, and artificial intelligence solutions[cite: 1].</p> 
+      },
+      { 
+        heading: '2. Prohibited System Activities', 
+        body: <p>You must not use Origins' infrastructure to engage in unauthorized port scanning, vulnerability probing, brute-force attacks, system exploitation, or denial-of-service (DoS) attempts, nor inject malicious code, trojans, or ransomware[cite: 1]. Content exploitation, such as distributing, selling, licensing, scraping, or commercially exploiting any software or proprietary text without written authorization, is forbidden[cite: 1]. Abuse, including phishing schemes, spamming, identity spoofing, and sending threatening communications, is strictly prohibited[cite: 1]. Additionally, you must not attempt to decompile, reverse-engineer, or discover the underlying machine learning prompts, neural network configurations, or algorithm logic powering our SaaS applications[cite: 1].</p> 
+      },
+      { 
+        heading: '3. Intellectual Property Rights Compliance', 
+        body: <p>All users must respect the proprietary rights, trademarks, trade secrets, and copyright notices embedded across our platform[cite: 1]. Modifying, obscuring, or removing copyright headers or branding attributions from any download or documentation is prohibited[cite: 1].</p> 
+      },
+      { 
+        heading: '4. Data Protection Obligations', 
+        body: <p>If you receive, process, or view personal data while utilizing our services or interactive portals, you must handle all such information in strict compliance with applicable data protection laws, the UK GDPR, and our Privacy Policy[cite: 1].</p> 
+      },
+      { 
+        heading: '5. Monitoring and Enforcement', 
+        body: <p>Origins reserves the right to monitor communications and system activity across our networks to ensure full compliance[cite: 1]. Failure to adhere to this policy constitutes a material breach and may result in immediate suspension or permanent termination of website access and API credentials without refund[cite: 1]. Enforcement may also include the secure removal of non-compliant user-generated content and formal referral to UK law enforcement or legal authorities, including the commencement of legal proceedings for financial indemnification[cite: 1].</p> 
+      },
+    ]} 
+  />;
 }
