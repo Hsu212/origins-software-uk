@@ -46,6 +46,15 @@ export default async function ServiceDetailPage({ params }: Props) {
       <div className="section-heading-row"><div><div className="section-kicker"><LocalizedText text="Related specialities" /></div><h2><LocalizedText text="Connected disciplines, when the work calls for them." /></h2></div><Link className="text-link" href="/services"><LocalizedText text="All services" /> <span aria-hidden="true">↗</span></Link></div>
       <div className="related-service-list">{related.map((item) => <Link key={item.slug} href={`/services/${item.slug}`}><span>{item.number}</span><strong><LocalizedText text={item.title} /></strong><span aria-hidden="true">↗</span></Link>)}</div>
     </section>
-    <section className="content-section case-cta"><div><div className="section-kicker"><LocalizedText text="Have a specific challenge?" /></div><h2><LocalizedText text="Let’s scope the work before we prescribe the solution." /></h2></div><Link className="button-primary" href="/contact"><LocalizedText text="Start a conversation" /> <span aria-hidden="true">↗</span></Link></section>
+    <section className="content-section case-cta">
+      <div>
+        <div className="section-kicker"><LocalizedText text="Have a specific challenge?" /></div>
+        <h2><LocalizedText text="Let’s scope the work before we prescribe the solution." /></h2>
+      </div>
+      {/* Added the base "button" class to fix layout, padding, and flex alignment */}
+      <Link className="button button-primary" href="/contact">
+        <LocalizedText text="Start a conversation" /> <span aria-hidden="true">↗</span>
+      </Link>
+    </section>
   </PageShell>;
 }
