@@ -41,6 +41,15 @@ export default async function WorkPatternPage({ params }: Props) {
       <div className="detail-list">{item.questions.map((question, index) => <article className="detail-list-row" key={question} data-motion><span>{String(index + 1).padStart(2, '0')}</span><h3><LocalizedText text={question} /></h3><span className="detail-list-mark" aria-hidden="true">↗</span></article>)}</div>
     </section>
     <section className="detail-principles-band"><div className="content-section detail-principles-inner"><div><div className="section-kicker"><LocalizedText text="Relevant disciplines" /></div><h2><LocalizedText text="Systems thinking, not isolated components." /></h2></div><ul>{item.disciplines.map((discipline) => <li key={discipline}><LocalizedText text={discipline} /></li>)}</ul></div></section>
-    <section className="content-section case-cta"><div><div className="section-kicker"><LocalizedText text="Your next step" /></div><h2><LocalizedText text="Translate the pattern into your operating context." /></h2></div><Link className="button-primary" href="/contact"><LocalizedText text="Talk to the team" /> <span aria-hidden="true">↗</span></Link></section>
+    <section className="content-section case-cta">
+      <div>
+        <div className="section-kicker"><LocalizedText text="Your next step" /></div>
+        <h2><LocalizedText text="Translate the pattern into your operating context." /></h2>
+      </div>
+      {/* Added the base "button" class to fix the layout */}
+      <Link className="button button-primary" href="/contact">
+        <LocalizedText text="Talk to the team" /> <span aria-hidden="true">↗</span>
+      </Link>
+    </section>
   </PageShell>;
 }
