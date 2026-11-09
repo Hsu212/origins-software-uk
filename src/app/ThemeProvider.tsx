@@ -123,28 +123,27 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeName>('forest');
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
+  const [theme, setTheme] = useState<ThemeName>(() => {
+    if (typeof window === 'undefined') return 'forest';
     const saved = localStorage.getItem('origins-theme') as ThemeName | null;
-    if (saved && themes[saved]) {
-      setTheme(saved);
-    }
-  }, []);
+    return saved && themes[saved] ? saved : 'forest';
+  });
 
   useEffect(() => {
-    if (!mounted) return;
-    localStorage.setItem('origins-theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
-  }, [theme, mounted]);
+  }, [theme]);
+
+  const handleSetTheme = (nextTheme: ThemeName) => {
+    setTheme(nextTheme);
+    localStorage.setItem('origins-theme', nextTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+  };
 
   const colors = themes[theme];
   const availableThemes = Object.values(themes);
 
   return (
-    <ThemeContext.Provider value={{ theme, colors, setTheme, availableThemes }}>
+    <ThemeContext.Provider value={{ theme, colors, setTheme: handleSetTheme, availableThemes }}>
       {children}
     </ThemeContext.Provider>
   );

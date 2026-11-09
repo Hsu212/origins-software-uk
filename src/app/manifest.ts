@@ -2,13 +2,13 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Origins Ltd.',
+    name: 'Origins Software',
     short_name: 'Origins',
-    description: 'Digital engineering for ambitious teams.',
+    description: 'Independent software engineering for dependable digital products and platforms.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#07130f',
-    theme_color: '#07130f',
-    icons: [{ src: '/favicon.ico', sizes: 'any', type: 'image/x-icon' }],
+    background_color: '#020D14',
+    theme_color: '#020D14',
+    icons: [{ src: '/origins-icon.png', sizes: 'any', type: 'image/png' }],
   };
 }

@@ -1,20 +1,58 @@
-import Link from 'next/link';
+import type { Metadata } from 'next';
+import Link from '@/app/components/LocaleLink';
 import PageShell from '@/app/components/PageShell';
 import PageHero from '@/app/components/PageHero';
+import LocalizedText from '@/app/components/LocalizedText';
+import { serviceSpecialties } from '@/app/data/siteContent';
+import { localizeMetadata } from '@/app/metadata';
 
-const services = [
-  { no: '01', title: 'Digital products', body: 'Customer-facing web platforms and internal products with clear UX, strong foundations and room to evolve.', tags: 'Web • Product • UX' },
-  { no: '02', title: 'Software engineering', body: 'APIs, application architecture, integrations and core product engineering for new builds or existing systems.', tags: 'APIs • Full-stack • Architecture' },
-  { no: '03', title: 'Cloud & DevOps', body: 'Practical infrastructure, environments, CI/CD and observability designed around reliability and predictable operations.', tags: 'Cloud • CI/CD • SRE' },
-  { no: '04', title: 'AI & data systems', body: 'AI-assisted workflows, data pipelines and model-enabled features that fit real business processes.', tags: 'AI • Data • Automation' },
-  { no: '05', title: 'Security engineering', body: 'Threat-aware design, application hardening, secure infrastructure and engineering practices that reduce avoidable risk.', tags: 'AppSec • Network • Review' },
-  { no: '06', title: 'Modernisation', body: 'Incremental upgrades for ageing systems, performance issues, technical debt and legacy operational workflows.', tags: 'Migration • Refactor • Performance' },
-];
+export async function generateMetadata(): Promise<Metadata> {
+  return localizeMetadata(
+    'Services',
+    'Explore Origins Software specialities across digital marketing, infrastructure, applied AI, full-stack engineering, cloud, cybersecurity and computer vision.',
+    'Services | Origins Software',
+    'Explore our nine service specialities across growth, software, cloud, AI and security.',
+  );
+}
 
 export default function ServicesPage() {
   return <PageShell>
-    <PageHero eyebrow="Capabilities" title="One senior team across product, software and infrastructure." description="Use us for the whole journey or for the technical layer that is blocking progress. Engagements can be fixed-scope, milestone-based or ongoing." />
-    <section className="content-section services-list">{services.map((service) => <article className="service-row" key={service.no}><div className="service-no">{service.no}</div><div><h2>{service.title}</h2><p>{service.body}</p><span>{service.tags}</span></div><div className="service-arrow">↗</div></article>)}</section>
-    <section className="content-section two-col"><div><div className="section-kicker">Engagement models</div><h2>Commercial clarity before implementation.</h2></div><div className="prose"><p>We can scope a defined delivery, work against milestones, or embed as an engineering partner. Every proposal can break the work into services, assumptions, fees and payment stages so stakeholders know what they are approving.</p><Link className="button-secondary" href="/contact">Request a quotation</Link></div></section>
+    <PageHero eyebrow="Specialities / 09 disciplines" title="The expertise to take complex work from idea to operation." description="Bring us the product, infrastructure, data or workflow problem in front of you. We’ll help define the right shape of the work before deciding how to build it." />
+    <section className="services-overview" aria-label="Our service specialities">
+      <div className="services-overview-heading">
+        <div>
+          <div className="section-kicker"><LocalizedText text="Related specialities" /></div>
+          <h2><LocalizedText text="Connected disciplines, when the work calls for them." /></h2>
+        </div>
+        <div className="services-overview-count"><strong>09</strong><span>DISCIPLINES<br />ONE TEAM</span></div>
+      </div>
+      <div className="service-card-grid">
+        {serviceSpecialties.map((service) => (
+          <Link className="service-card" href={`/services/${service.slug}`} key={service.slug} data-motion data-index={service.number}>
+            <div className="service-card-top">
+              <span className="service-card-number">{service.number}<span> / 09</span></span>
+              <span className="service-card-category"><LocalizedText text={service.category} /></span>
+            </div>
+            <div className="service-card-rule" aria-hidden="true">
+              <span />
+              <span>{service.number}</span>
+            </div>
+            <h3><LocalizedText text={service.title} /></h3>
+            <p><LocalizedText text={service.description} /></p>
+            <div className="service-card-capabilities">
+              {service.capabilities.slice(0, 2).map((capability) => <span key={capability}><LocalizedText text={capability} /></span>)}
+            </div>
+            <div className="service-card-bottom">
+              <span className="service-card-tags">{service.tags}</span>
+              <span className="service-card-arrow" aria-hidden="true">↗</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+    <section className="content-section two-col">
+      <div><div className="section-kicker"><LocalizedText text="How we engage" /></div><h2><LocalizedText text="Defined scope. Visible decisions. Responsible delivery." /></h2></div>
+      <div className="prose"><p><LocalizedText text="Some engagements need one specialist discipline. Others need product, engineering and operations to work together. We shape the team and delivery model around the problem, with assumptions, responsibilities and trade-offs made explicit." /></p><Link className="button-secondary" href="/contact"><LocalizedText text="Discuss your requirements" /> <span aria-hidden="true">↗</span></Link></div>
+    </section>
   </PageShell>;
 }

@@ -1,18 +1,26 @@
-import Link from 'next/link';
+import type { Metadata } from 'next';
+import Link from '@/app/components/LocaleLink';
 import PageShell from '@/app/components/PageShell';
 import PageHero from '@/app/components/PageHero';
+import LocalizedText from '@/app/components/LocalizedText';
+import { processStages } from '@/app/data/siteContent';
+import { localizeMetadata } from '@/app/metadata';
 
-const steps = [
-  ['01', 'Understand', 'Goals, users, constraints, existing systems, risks and what success needs to look like.'],
-  ['02', 'Frame', 'We turn discovery into scope, architecture, milestones, responsibilities and a commercial proposal.'],
-  ['03', 'Build', 'Small senior team, short feedback loops, visible progress and production-minded engineering.'],
-  ['04', 'Operate', 'Launch, measure, document and improve. The handover is part of delivery, not an afterthought.'],
-];
+export async function generateMetadata(): Promise<Metadata> {
+  return localizeMetadata(
+    'Process',
+    'A considered software delivery process from discovery and architecture through engineering, release and operation.',
+    'Process | Origins Software',
+    'A considered delivery path from discovery through engineering and operation.',
+  );
+}
 
 export default function ProcessPage() {
   return <PageShell>
-    <PageHero eyebrow="Methodology" title="A calm delivery process with fewer surprises." description="The process is intentionally simple: understand the problem, agree on the shape of the work, build in small increments, then leave the system in a maintainable state." />
-    <section className="content-section process-list">{steps.map(([no, title, body]) => <article key={no} className="process-row"><div className="process-no">{no}</div><div><h2>{title}</h2><p>{body}</p></div><div className="process-line" /></article>)}</section>
-    <section className="content-section two-col"><div><div className="section-kicker">What clients see</div><h2>Visibility without project theatre.</h2></div><div className="prose"><p>Expect clear status, decision logs, scope changes, delivery notes and practical next steps. When assumptions change, they are surfaced early enough to act on.</p><Link className="text-link" href="/contact">Start with a discovery conversation <span>→</span></Link></div></section>
+    <PageHero eyebrow="Methodology / 04 stages" title="A calm delivery process with fewer surprises." description="The process is intentionally simple: understand the problem, agree on the shape of the work, build in small increments, then leave the system in a maintainable state." />
+    <section className="content-section process-list" aria-label="Delivery stages">
+      {processStages.map((stage) => <Link key={stage.slug} href={`/process/${stage.slug}`} className="process-row process-row-link" data-motion><div className="process-no">{stage.number}</div><div><div className="process-subtitle"><LocalizedText text={stage.subtitle} /></div><h2><LocalizedText text={stage.title} /></h2><p><LocalizedText text={stage.description} /></p><span className="process-detail-link"><LocalizedText text="Explore this stage" /> <span aria-hidden="true">↗</span></span></div><div className="process-line" aria-hidden="true" /></Link>)}
+    </section>
+    <section className="content-section two-col"><div><div className="section-kicker"><LocalizedText text="What clients see" /></div><h2><LocalizedText text="Visibility without project theatre." /></h2></div><div className="prose"><p><LocalizedText text="Expect clear status, decision logs, scope changes, delivery notes and practical next steps. When assumptions change, they are surfaced early enough to act on." /></p><Link className="text-link" href="/contact"><LocalizedText text="Start with a discovery conversation" /> <span>→</span></Link></div></section>
   </PageShell>;
 }
