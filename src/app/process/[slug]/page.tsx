@@ -33,6 +33,15 @@ export default async function ProcessStagePage({ params }: Props) {
     </section>
     <section className="detail-principles-band"><div className="content-section detail-principles-inner"><div><div className="section-kicker"><LocalizedText text="Working principles" /></div><h2><LocalizedText text="Good delivery is a series of clear choices." /></h2></div><ul>{stage.principles.map((principle) => <li key={principle}><LocalizedText text={principle} /></li>)}</ul></div></section>
     <section className="content-section process-step-navigation"><Link href={currentIndex > 0 ? `/process/${processStages[currentIndex - 1].slug}` : '/process'} className="button-secondary">← <LocalizedText text={currentIndex > 0 ? processStages[currentIndex - 1].subtitle : 'All process stages'} /></Link>{nextStage && <Link href={`/process/${nextStage.slug}`} className="button-secondary"><LocalizedText text={`Next: ${nextStage.subtitle}`} /> <span aria-hidden="true">↗</span></Link>}</section>
-    <section className="content-section case-cta"><div><div className="section-kicker"><LocalizedText text="A good place to start" /></div><h2><LocalizedText text="We’ll make the scope, risks and next steps clear." /></h2></div><Link className="button-primary" href="/contact"><LocalizedText text="Start a conversation" /> <span aria-hidden="true">↗</span></Link></section>
+    <section className="content-section case-cta">
+      <div>
+        <div className="section-kicker"><LocalizedText text="A good place to start" /></div>
+        <h2><LocalizedText text="We’ll make the scope, risks and next steps clear." /></h2>
+      </div>
+      {/* Added the base "button" class to fix the layout */}
+      <Link className="button button-primary" href="/contact">
+        <LocalizedText text="Start a conversation" /> <span aria-hidden="true">↗</span>
+      </Link>
+    </section>
   </PageShell>;
 }
