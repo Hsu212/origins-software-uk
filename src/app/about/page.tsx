@@ -60,7 +60,8 @@ export default function AboutPage() {
         </div>
         <div className="prose">
           <p><LocalizedText text="Tell us what you are building, what is not working, or what needs to happen next. We will turn that into a practical conversation about scope, team shape and delivery." /></p>
-          <Link className="button-primary" href="/contact"><LocalizedText text="Talk to Origins" /> <span>↗</span></Link>
+          {/* Added the base "button" class here */}
+          <Link className="button button-primary" href="/contact"><LocalizedText text="Talk to Origins" /> <span>↗</span></Link>
         </div>
       </section>
     </PageShell>
