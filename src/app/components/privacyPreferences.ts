@@ -61,11 +61,7 @@ export function saveCookiePreferences(
     expiresAt: Date.now() + CONSENT_LIFETIME_MS,
   };
   if (typeof window !== 'undefined') {
-    try {
-      window.localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(saved));
-    } catch {
-      // The current page still honours the selection in memory if browser storage is blocked.
-    }
+    window.localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(saved));
     window.dispatchEvent(new Event(COOKIE_PREFERENCES_CHANGED));
   }
   return saved;
@@ -86,11 +82,7 @@ export function readReduceMotionPreference(): boolean {
 
 export function saveReduceMotionPreference(reduce: boolean): void {
   if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(MOTION_PREFERENCE_KEY, String(reduce));
-  } catch {
-    // Keep the live-page setting working even when browser storage is disabled.
-  }
+  window.localStorage.setItem(MOTION_PREFERENCE_KEY, String(reduce));
   if (reduce) document.documentElement.setAttribute('data-motion', 'reduce');
   else document.documentElement.removeAttribute('data-motion');
 }

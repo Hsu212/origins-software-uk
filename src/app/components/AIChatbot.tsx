@@ -1,3 +1,2 @@
-// Backwards-compatible alias for older imports. The globally mounted assistant
-// and its same-origin /api/assistant backend live in AssistantFloating.tsx.
+// Backwards-compatible alias for older imports.
 export { default } from './AssistantFloating';

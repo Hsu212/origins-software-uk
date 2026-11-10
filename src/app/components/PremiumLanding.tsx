@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import SiteFooter from '@/app/components/SiteFooter';
 import SiteHeader from '@/app/components/SiteHeader';
 
+const clientPortalUrl = process.env.NEXT_PUBLIC_CLIENT_PORTAL_URL || 'https://portal.origins-software.com';
+
 const capabilities = [
   { number: '01', title: 'Product engineering', text: 'Digital products built around real users, sound architecture and the work that needs to get done.', scope: 'PRODUCT · WEB · MOBILE' },
   { number: '02', title: 'Software architecture', text: 'Clear system boundaries, dependable APIs and integrations that make complexity easier to manage.', scope: 'PLATFORMS · APIS · INTEGRATION' },
@@ -43,32 +45,59 @@ const mapBounds = {
   north: 83.600842,
   south: -58.508473,
 };
+// Convert latitude into Mercator map coordinates
+const mercatorY = (latitude: number): number => {
+  const radians = (latitude * Math.PI) / 180;
 
-const mercatorY = (latitude: number) => {
-  const radians = (Math.max(-85, Math.min(85, latitude)) * Math.PI) / 180;
-  return Math.log(Math.tan(Math.PI / 4 + radians / 2));
+  return Math.log(
+    Math.tan(Math.PI / 4 + radians / 2)
+  );
 };
 
-const mapNorth = mercatorY(mapBounds.north);
-const mapSouth = mercatorY(mapBounds.south);
+// Project geographic coordinates onto the actual world.svg
+const projectMapCoordinate = (
+  latitude: number,
+  longitude: number
+) => {
+  const safeLatitude = Math.max(
+    mapBounds.south,
+    Math.min(mapBounds.north, latitude)
+  );
+
+  const northY = mercatorY(mapBounds.north);
+  const southY = mercatorY(mapBounds.south);
+  const currentY = mercatorY(safeLatitude);
+
+  return {
+    left:
+      ((longitude - mapBounds.west) /
+        (mapBounds.east - mapBounds.west)) * 100,
+
+    top:
+      ((northY - currentY) /
+        (northY - southY)) * 100,
+  };
+};
 
 const supportedMarkets = [
-  { label: 'UNITED KINGDOM', latitude: 51.5072, longitude: -0.1276, labelPosition: 'left' },
-  { label: 'IRELAND', latitude: 53.3498, longitude: -6.2603, labelPosition: 'left' },
-  { label: 'ICELAND', latitude: 64.1466, longitude: -21.9426, labelPosition: 'left' },
-  { label: 'NORWAY', latitude: 59.9139, longitude: 10.7522, labelPosition: 'above' },
-  { label: 'FINLAND', latitude: 60.1699, longitude: 24.9384, labelPosition: 'right' },
-  { label: 'GERMANY', latitude: 52.5200, longitude: 13.4050, labelPosition: 'above' },
-  { label: 'FRANCE', latitude: 48.8566, longitude: 2.3522, labelPosition: 'left' },
-  { label: 'SLOVAKIA', latitude: 48.1486, longitude: 17.1077, labelPosition: 'right' },
-  { label: 'SERBIA', latitude: 44.7866, longitude: 20.4489, labelPosition: 'right' },
-  { label: 'JAPAN', latitude: 35.6762, longitude: 139.6503 },
-  { label: 'MYANMAR', latitude: 16.8409, longitude: 96.1735, labelPosition: 'above' },
-  { label: 'THAILAND', latitude: 13.7563, longitude: 100.5018 },
-  { label: 'SINGAPORE', latitude: 1.3521, longitude: 103.8198 },
-  { label: 'AUSTRALIA', latitude: -33.8688, longitude: 151.2093 },
-  { label: 'NEW ZEALAND', latitude: -41.2865, longitude: 174.7762 },
+  { label: 'United Kingdom', region: 'Europe', latitude: 51.5072, longitude: -0.1276 },
+  { label: 'Ireland', region: 'Europe', latitude: 53.3498, longitude: -6.2603 },
+  { label: 'Iceland', region: 'Europe', latitude: 64.1466, longitude: -21.9426 },
+  { label: 'Norway', region: 'Europe', latitude: 59.9139, longitude: 10.7522 },
+  { label: 'Finland', region: 'Europe', latitude: 60.1699, longitude: 24.9384 },
+  { label: 'Germany', region: 'Europe', latitude: 52.5200, longitude: 13.4050 },
+  { label: 'France', region: 'Europe', latitude: 48.8566, longitude: 2.3522 },
+  { label: 'Slovakia', region: 'Europe', latitude: 48.1486, longitude: 17.1077 },
+  { label: 'Serbia', region: 'Europe', latitude: 44.7866, longitude: 20.4489 },
+  { label: 'Japan', region: 'Asia Pacific', latitude: 35.6762, longitude: 139.6503 },
+  { label: 'Myanmar', region: 'Asia Pacific', latitude: 16.8409, longitude: 96.1735 },
+  { label: 'Thailand', region: 'Asia Pacific', latitude: 13.7563, longitude: 100.5018 },
+  { label: 'Singapore', region: 'Asia Pacific', latitude: 1.3521, longitude: 103.8198 },
+  { label: 'Australia', region: 'Oceania', latitude: -33.8688, longitude: 151.2093 },
+  { label: 'New Zealand', region: 'Oceania', latitude: -41.2865, longitude: 174.7762 },
 ];
+
+const marketRegions = ['Europe', 'Asia Pacific', 'Oceania'] as const;
 
 const partnerGroups = [
   { label: 'AI platforms', partners: [
@@ -132,51 +161,60 @@ export default function PremiumLanding() {
               {localized('We design, build and run digital products, business platforms and cloud systems—bringing clear thinking and careful engineering to every stage.')}
             </p>
             <div className="hero-actions" data-reveal data-delay="300">
-              <Link className="button button-primary premium-btn" href="/contact">
-                {localized('Start a conversation')} <span className="button-arrow icon-smooth" aria-hidden="true">↗</span>
-              </Link>
+              <a className="button button-primary premium-btn" href={clientPortalUrl} target="_blank" rel="noreferrer">
+                {localized('Open client portal')} <span className="button-arrow icon-smooth" aria-hidden="true">↗</span>
+              </a>
               <Link className="button button-ghost premium-btn-ghost" href="/services">
                 {localized('Explore capabilities')} <span className="button-arrow icon-smooth" aria-hidden="true">↘</span>
               </Link>
             </div>
           </div>
 
-          <div className="hero-visual software-showcase" data-reveal data-delay="300" aria-label={localized('Software delivery overview')}>
+          <div className="hero-visual software-showcase" data-reveal data-delay="300" role="region" aria-label={localized('Client starting points')}>
             <div className="showcase-window">
               <div className="showcase-window-bar">
                 <span className="window-dots" aria-hidden="true"><i /><i /><i /></span>
-                <span className="showcase-window-label">ORIGINS / DELIVERY SYSTEMS</span>
-                <span className="showcase-window-index">01—04</span>
+                <span className="showcase-window-label">ORIGINS / CLIENT STARTING POINTS</span>
+                <span className="showcase-window-index">01—03</span>
               </div>
               <div className="showcase-content">
                 <div className="showcase-intro">
-                  <span className="showcase-kicker">{localized('From first idea to production')}</span>
-                  <span className="showcase-live"><i /> {localized('BUILT FOR THE REAL WORLD')}</span>
-                </div>
-                <div className="showcase-flow" aria-label={localized('Discover, design, build and operate')}>
-                  <div className="flow-step"><span>01</span><strong>{localized('Discover')}</strong><small>{localized('Understand the need')}</small></div>
-                  <div className="flow-connector" aria-hidden="true" />
-                  <div className="flow-step"><span>02</span><strong>{localized('Design')}</strong><small>{localized('Shape the system')}</small></div>
-                  <div className="flow-connector" aria-hidden="true" />
-                  <div className="flow-step flow-step-active"><span>03</span><strong>{localized('Build')}</strong><small>{localized('Ship with confidence')}</small></div>
-                  <div className="flow-connector" aria-hidden="true" />
-                  <div className="flow-step"><span>04</span><strong>{localized('Operate')}</strong><small>{localized('Improve over time')}</small></div>
-                </div>
-                <div className="showcase-modules">
-                  <div className="showcase-module">
-                    <span className="module-symbol" aria-hidden="true">⌘</span>
-                    <div><strong>{localized('Digital products')}</strong><small>{localized('Web · Mobile · Platforms')}</small></div>
-                    <span className="module-arrow" aria-hidden="true">↗</span>
+                  <div className="showcase-heading">
+                    <span className="showcase-eyebrow">{localized('A PRACTICAL PLACE TO START')}</span>
+                    <h2 className="showcase-kicker">{localized('What do you need to move forward?')}</h2>
                   </div>
-                  <div className="showcase-module">
-                    <span className="module-symbol module-symbol-cloud" aria-hidden="true">◌</span>
-                    <div><strong>{localized('Cloud & intelligent systems')}</strong><small>{localized('Infrastructure · Data · AI')}</small></div>
-                    <span className="module-arrow" aria-hidden="true">↗</span>
-                  </div>
+                  <span className="showcase-live"><i /> {localized('CLEAR NEXT STEPS')}</span>
                 </div>
+                <p className="showcase-description">{localized('Choose the closest fit. We’ll help define a practical next step.')}</p>
+                <nav className="showcase-pathways" aria-label={localized('Choose a project starting point')}>
+                  <Link className="showcase-pathway" href="/contact">
+                    <span className="pathway-index">01</span>
+                    <span className="pathway-copy">
+                      <strong>{localized('Starting a new product?')}</strong>
+                      <small>{localized('Product scope, architecture and a delivery plan.')}</small>
+                    </span>
+                    <span className="pathway-action">{localized('Start a project')}<i aria-hidden="true">↗</i></span>
+                  </Link>
+                  <Link className="showcase-pathway" href="/services">
+                    <span className="pathway-index">02</span>
+                    <span className="pathway-copy">
+                      <strong>{localized('Improving a live system?')}</strong>
+                      <small>{localized('Cloud, security, AI, modernisation and performance.')}</small>
+                    </span>
+                    <span className="pathway-action">{localized('Explore services')}<i aria-hidden="true">↗</i></span>
+                  </Link>
+                  <a className="showcase-pathway" href={clientPortalUrl} target="_blank" rel="noreferrer">
+                    <span className="pathway-index">03</span>
+                    <span className="pathway-copy">
+                      <strong>{localized('Already working with us?')}</strong>
+                      <small>{localized('Review quotations, service fees, invoices, documents and payment status in the secure client portal.')}</small>
+                    </span>
+                    <span className="pathway-action">{localized('Open client portal')}<i aria-hidden="true">↗</i></span>
+                  </a>
+                </nav>
                 <div className="showcase-footnote">
-                  <span>{localized('ENGINEERED WITH INTENT')}</span>
-                  <span><i /> {localized('PRODUCT · PLATFORM · OPERATIONS')}</span>
+                  <span>{localized('START WITH THE OUTCOME')}</span>
+                  <span><i /> {localized('GOALS · USERS · CONSTRAINTS')}</span>
                 </div>
               </div>
             </div>
@@ -228,23 +266,46 @@ export default function PremiumLanding() {
               className="world-map-svg"
               priority
             />
-            {supportedMarkets.map(({ label, latitude, longitude, labelPosition }) => {
-              const left = ((longitude - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100;
-              const top = ((mapNorth - mercatorY(latitude)) / (mapNorth - mapSouth)) * 100;
+            {supportedMarkets.map((market) => {
+  const position = projectMapCoordinate(
+    market.latitude,
+    market.longitude
+  );
 
+  return (
+    <div
+      key={market.label}
+      className="world-map-marker"
+      style={{
+        left: `${position.left}%`,
+        top: `${position.top}%`,
+      }}
+      title={market.label}
+    />
+  );
+})}
+          </div>
+          <aside className="map-market-list" aria-label={localized('Supported countries')}>
+            {marketRegions.map((region) => {
+              const regionId = `market-region-${region.replace(/\s+/g, '-').toLowerCase()}`;
               return (
-                <div
-                  className="map-node"
-                  key={label}
-                  style={{ top: `${top}%`, left: `${left}%` }}
-                >
-                  <div className="node-ring"></div>
-                  <div className="node-core"></div>
-                  <span className={`node-label mono-accent ${labelPosition ? `node-label-${labelPosition}` : ''}`}>{label}</span>
-                </div>
+                <section className="map-market-region" key={region} aria-labelledby={regionId}>
+                  <h3 id={regionId}>
+                    <span className="map-market-region-dot" aria-hidden="true" />
+                    {localized(region)}
+                    <span className="map-market-count">
+                      {String(supportedMarkets.filter((market) => market.region === region).length).padStart(2, '0')}
+                    </span>
+                  </h3>
+                  <ul>
+                    {supportedMarkets.filter((market) => market.region === region).map(({ label }) => (
+                      <li key={label}>{localized(label)}</li>
+                    ))}
+                  </ul>
+                </section>
               );
             })}
-          </div>
+          </aside>
         </div>
       </section>
 
@@ -365,7 +426,7 @@ export default function PremiumLanding() {
             <h2 className="massive-title">{localized('Bring us the')}<br /><em className="italic-accent">{localized('difficult part.')}</em></h2>
             <p className="cta-p">{localized('Tell us what you are building, what is not working or what needs to happen next. We will help turn the problem into a practical plan.')}</p>
             <div className="hero-actions cta-actions">
-              <Link className="button button-primary premium-btn" href="/contact">{localized('Talk to Origins')} <span className="button-arrow icon-smooth" aria-hidden="true">↗</span></Link>
+              <a className="button button-primary premium-btn" href={clientPortalUrl} target="_blank" rel="noreferrer">{localized('Open client portal')} <span className="button-arrow icon-smooth" aria-hidden="true">↗</span></a>
               <a href="mailto:support@origins-software.com" className="button button-ghost premium-btn-ghost">{localized('Email the team')} <span className="button-arrow icon-smooth" aria-hidden="true">↗</span></a>
             </div>
           </div>
@@ -451,25 +512,21 @@ export default function PremiumLanding() {
         .showcase-window-label, .showcase-window-index, .showcase-footnote { color: #718893; font: 8px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .11em; }
         .showcase-content { padding: clamp(1.5rem, 3vw, 2.25rem); }
         .showcase-intro { align-items: flex-start; }
-        .showcase-kicker { color: #f2f5f7; font-size: 1.05rem; font-weight: 500; letter-spacing: -.03em; }
+        .showcase-heading { display: grid; min-width: 0; gap: .55rem; }
+        .showcase-eyebrow { color: #82969e; font: 7px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .12em; }
+        .showcase-kicker { margin: 0; color: #f2f5f7; font-size: clamp(1rem, 1.7vw, 1.3rem); font-weight: 500; line-height: 1.25; letter-spacing: -.035em; }
         .showcase-live { display: inline-flex; align-items: center; gap: 7px; color: var(--lime); font: 7px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .08em; }
         .showcase-live i, .showcase-footnote i { width: 5px; height: 5px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 9px rgba(205,220,57,.7); }
-        .showcase-flow { display: flex; align-items: center; gap: 8px; margin: 2rem 0; padding: 1.05rem 0; border-top: 1px solid rgba(169,188,199,.1); border-bottom: 1px solid rgba(169,188,199,.1); }
-        .flow-step { display: grid; gap: 5px; min-width: 0; }
-        .flow-step > span { color: #6b808a; font: 8px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-        .flow-step strong { color: #dce4e8; font-size: 10px; font-weight: 500; }
-        .flow-step small { color: #718893; font-size: 8px; line-height: 1.4; }
-        .flow-step-active > span, .flow-step-active strong { color: var(--lime); }
-        .flow-connector { height: 1px; min-width: 10px; flex: 1; background: linear-gradient(90deg, rgba(205,220,57,.5), rgba(169,188,199,.14)); }
-        .showcase-modules { display: grid; gap: 8px; }
-        .showcase-module { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid rgba(169,188,199,.12); background: linear-gradient(100deg, rgba(255,255,255,.035), rgba(255,255,255,.008)); transition: border-color .3s ease, transform .3s ease, background .3s ease; }
-        .showcase-module:hover { transform: translateX(4px); border-color: rgba(205,220,57,.32); background: linear-gradient(100deg, rgba(205,220,57,.055), rgba(255,255,255,.012)); }
-        .module-symbol { display: grid; width: 36px; height: 36px; flex: 0 0 auto; place-items: center; color: var(--lime); background: rgba(205,220,57,.08); font-size: 17px; }
-        .module-symbol-cloud { color: #9bb9c6; background: rgba(155,185,198,.08); }
-        .showcase-module > div { display: grid; gap: 2px; min-width: 0; }
-        .showcase-module strong { color: #e5ecef; font-size: 10px; font-weight: 500; }
-        .showcase-module small { color: #718893; font-size: 8px; }
-        .module-arrow { margin-left: auto; color: #718893; font-size: 13px; }
+        .showcase-description { margin: .85rem 0 1.15rem; color: #93a6ae; font-size: 10px; line-height: 1.6; }
+        .showcase-pathways { display: grid; gap: 8px; }
+        .showcase-pathway { display: grid; grid-template-columns: 27px minmax(0, 1fr) max-content; align-items: center; gap: 10px; padding: 12px; border: 1px solid rgba(169,188,199,.13); background: linear-gradient(100deg, rgba(255,255,255,.035), rgba(255,255,255,.008)); text-decoration: none; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+        .showcase-pathway:hover { transform: translateX(3px); border-color: rgba(205,220,57,.35); background: linear-gradient(100deg, rgba(205,220,57,.055), rgba(255,255,255,.012)); }
+        .pathway-index { align-self: start; padding-top: 1px; color: var(--lime); font: 8px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+        .pathway-copy { display: grid; min-width: 0; gap: 3px; }
+        .pathway-copy strong { color: #e5ecef; font-size: 10px; font-weight: 500; line-height: 1.35; }
+        .pathway-copy small { color: #82969e; font-size: 8px; line-height: 1.45; }
+        .pathway-action { display: inline-flex; align-items: center; gap: 7px; color: #c9d46a; font: 7px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; }
+        .pathway-action i { color: #e2e9ec; font-size: 11px; font-style: normal; }
         .showcase-footnote { justify-content: space-between; margin-top: 1.2rem; font-size: 7px; }
         .showcase-footnote > span:last-child { display: inline-flex; align-items: center; gap: 7px; }
         .showcase-orbit { position: absolute; border: 1px solid rgba(205,220,57,.12); border-radius: 50%; pointer-events: none; }
@@ -524,6 +581,63 @@ export default function PremiumLanding() {
           z-index: 2; 
         }
 
+        .world-map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1009.6727 / 665.96301;
+}
+
+.world-map img {
+  object-fit: contain;
+}
+
+/* Visible country location markers */
+.world-map-marker {
+  position: absolute;
+  z-index: 20;
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #c8ff00;
+  border: 1.5px solid #f4ffc0;
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 0 3px rgba(200, 255, 0, 0.15),
+    0 0 12px rgba(200, 255, 0, 0.95),
+    0 0 22px rgba(200, 255, 0, 0.35);
+  cursor: pointer;
+}
+
+/* Animated outer ring */
+.world-map-marker::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 1px solid rgba(200, 255, 0, 0.75);
+  border-radius: 50%;
+  animation: market-marker-pulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes market-marker-pulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.55);
+  }
+  70%, 100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .world-map-marker::after {
+    animation: none;
+  }
+}
+
         /* The offset hollow ring matching the screenshot perfectly */
         .node-ring { 
           position: absolute; 
@@ -536,28 +650,6 @@ export default function PremiumLanding() {
           opacity: 0.7; 
         }
         
-        /* The dark terminal labels */
-        .node-label { 
-          position: absolute;
-          top: 10px;
-          left: 10px;
-          font-size: 0.65rem; 
-          font-weight: 600; 
-          color: #fff; 
-          background: rgba(0,0,0,0.8); 
-          padding: 4px 8px; 
-          border-radius: 4px; 
-          border: 1px solid rgba(255,255,255,0.15); 
-          white-space: nowrap; 
-          letter-spacing: 0.05em;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-          transition: border-color 0.3s;
-        }
-        .node-label-above { top: auto; bottom: 10px; }
-        .node-label-left { top: 50%; right: 10px; left: auto; transform: translateY(-50%); }
-        .node-label-right { top: 50%; left: 10px; transform: translateY(-50%); }
-        .map-node:hover .node-label { border-color: rgba(200,255,0,0.4); }
-
         /* BUTTONS & LINKS */
         .premium-btn { background: #ffffff; color: #000000; border-radius: 99px; padding: 0.85rem 1.75rem; font-weight: 500; transition: transform 0.4s var(--premium-ease), box-shadow 0.4s var(--premium-ease); font-size: 0.95rem; }
         .premium-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,255,255,0.1); }
@@ -663,10 +755,6 @@ export default function PremiumLanding() {
           .software-showcase { padding: .5rem 0 .5rem .5rem; }
           .showcase-window { transform: none; }
           .showcase-content { padding: 1rem; }
-          .showcase-flow { gap: 5px; margin: 1.4rem 0; }
-          .flow-step strong { font-size: 9px; }
-          .flow-step small { font-size: 7px; }
-          .flow-connector { min-width: 5px; }
           .showcase-live { max-width: 110px; text-align: right; }
           .partner-group { grid-template-columns: 1fr; gap: .75rem; }
           .partner-chip { font-size: .7rem; }
@@ -675,15 +763,270 @@ export default function PremiumLanding() {
           .bento-grid, .bento-grid-2x2 { grid-template-columns: 1fr; }
           .timeline-list { padding-left: 1.5rem; }
           .timeline-node { left: -1.5rem; }
-          .node-label { display: none; /* Keep mobile clean */ }
         }
         @media (prefers-reduced-motion: reduce) {
-          .showcase-window, .showcase-module, .partner-group, .partner-chip, .bento-card::before {
+          .showcase-window, .showcase-pathway, .partner-group, .partner-chip, .bento-card::before {
             transition: none;
           }
-          .software-showcase:hover .showcase-window, .showcase-module:hover, .partner-group:hover {
+          .software-showcase:hover .showcase-window, .showcase-pathway:hover, .partner-group:hover {
             transform: none;
           }
+        }
+
+        /* Refined software-company visual system */
+        .premium-override {
+          --surface-bg: #071116;
+          --surface-border: rgba(157, 184, 194, .16);
+          --text-secondary: #aab9bf;
+          background:
+            radial-gradient(ellipse at 82% 7%, rgba(205, 220, 57, .08), transparent 30rem),
+            linear-gradient(180deg, #081419 0%, #061014 45%, #071116 100%);
+        }
+        .premium-hero {
+          min-height: min(790px, calc(100svh - 84px));
+          border-bottom-color: rgba(157,184,194,.16);
+          background:
+            linear-gradient(rgba(174,198,205,.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(174,198,205,.035) 1px, transparent 1px),
+            radial-gradient(ellipse at 74% 44%, rgba(205,220,57,.09), transparent 36%);
+          background-size: 64px 64px, 64px 64px, auto;
+          background-position: center center;
+        }
+        .premium-hero::after {
+          position: absolute;
+          inset: auto 0 0;
+          height: 1px;
+          content: "";
+          background: linear-gradient(90deg, transparent, rgba(205,220,57,.38), transparent);
+        }
+        .premium-hero > .hero-noise { display: none; }
+        .compact-hero { min-height: min(690px, calc(100svh - 84px)); }
+        .hero-copy .hero-eyebrow { color: #b7c5c9; }
+        .premium-override .massive-title {
+          font-size: clamp(3.5rem, 6.4vw, 6.2rem);
+          line-height: .99;
+          letter-spacing: -.075em;
+          text-wrap: balance;
+        }
+        .premium-override .hero-lede {
+          margin-top: 1.65rem;
+          color: #aab9bf;
+          font-size: clamp(1.05rem, 1.35vw, 1.18rem);
+          line-height: 1.75;
+        }
+        .hero-actions { gap: .8rem; }
+        .premium-btn {
+          border: 1px solid var(--lime);
+          background: var(--lime);
+          color: #10170a;
+          box-shadow: 0 8px 26px rgba(205,220,57,.14);
+        }
+        .premium-btn:hover { background: #dce96a; box-shadow: 0 12px 32px rgba(205,220,57,.2); }
+        .premium-btn-ghost {
+          border-color: rgba(173,194,201,.24);
+          background: rgba(7,17,22,.55);
+          color: #e8edef;
+        }
+        .premium-btn-ghost:hover { border-color: rgba(205,220,57,.42); background: rgba(205,220,57,.06); }
+        .software-showcase { padding: 1.1rem 0 1.1rem 1.1rem; }
+        .software-showcase::before {
+          inset: 5% -5% 4% 1%;
+          border-color: rgba(205,220,57,.2);
+          background: radial-gradient(ellipse at 72% 38%, rgba(205,220,57,.1), transparent 58%);
+          transform: rotate(-3deg);
+        }
+        .showcase-window {
+          border-color: rgba(166,193,201,.22);
+          border-radius: 12px;
+          background: linear-gradient(145deg, rgba(15,35,42,.98), rgba(6,17,22,.99) 76%);
+          box-shadow: 0 36px 100px rgba(0,0,0,.48), inset 0 1px rgba(255,255,255,.07);
+        }
+        .showcase-window-bar { min-height: 48px; }
+        .showcase-content { padding: clamp(1.5rem, 3vw, 2rem); }
+        .showcase-window-label, .showcase-window-index { font-size: 9px; }
+        .showcase-kicker { font-size: 1.1rem; }
+        .showcase-live { font-size: 8px; }
+        .showcase-pathway { border-radius: 6px; }
+        .pathway-copy strong { font-size: 12px; }
+        .pathway-copy small { font-size: 10px; }
+        .pathway-action { font-size: 8px; }
+        .showcase-footnote { font-size: 8px; }
+        .ecosystem-section {
+          padding: 2rem 0 2.4rem;
+          border-bottom-color: var(--surface-border);
+          background: linear-gradient(180deg, rgba(255,255,255,.018), transparent);
+        }
+        .partner-group {
+          min-height: 88px;
+          border-radius: 8px;
+          border-color: var(--surface-border);
+          background: linear-gradient(135deg, rgba(18,39,48,.65), rgba(8,20,25,.5));
+        }
+        .partner-group-label { font-size: 9px; }
+        .partner-chip { border-radius: 5px; }
+        .tight-section { padding-top: clamp(4.5rem, 8vw, 7rem); padding-bottom: clamp(4.5rem, 8vw, 7rem); }
+        .split-heading { align-items: end; gap: clamp(2rem, 5vw, 5rem); margin-bottom: 2.75rem; }
+        .heading-right-text, .work-heading-aside > p {
+          max-width: 470px;
+          color: #aab9bf;
+          font-size: 1rem;
+          line-height: 1.8;
+        }
+        .premium-h2 { text-wrap: balance; }
+        .italic-accent { color: #bdc9ce; }
+        .map-wrapper {
+          display: grid;
+          height: auto;
+          min-height: 430px;
+          grid-template-columns: minmax(0, 1fr) minmax(220px, .36fr);
+          align-items: stretch;
+          gap: .5rem;
+          padding: clamp(1rem, 2.4vw, 2rem);
+          margin-top: 0;
+          border-color: var(--surface-border);
+          border-radius: 12px;
+          background:
+            linear-gradient(rgba(174,198,205,.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(174,198,205,.025) 1px, transparent 1px),
+            radial-gradient(ellipse at 50% 50%, #10242b, #071116 72%);
+          background-size: 40px 40px, 40px 40px, auto;
+        }
+        .map-canvas { width: min(100%, 757px); justify-self: center; align-self: center; }
+        .map-market-list {
+          display: grid;
+          align-content: center;
+          gap: 1.15rem;
+          min-width: 0;
+          padding: 1.25rem 1.4rem;
+          border-left: 1px solid var(--surface-border);
+        }
+        .map-market-region h3 {
+          display: flex;
+          align-items: center;
+          gap: .55rem;
+          margin: 0 0 .6rem;
+          color: #b7c5c9;
+          font: 9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+          letter-spacing: .12em;
+          text-transform: uppercase;
+        }
+        .map-market-region-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: var(--lime); box-shadow: 0 0 9px rgba(205,220,57,.48); }
+        .map-market-count { margin-left: auto; color: #667d86; }
+        .map-market-region ul { display: flex; flex-wrap: wrap; gap: .38rem; margin: 0; padding: 0; list-style: none; }
+        .map-market-region li { padding: .3rem .48rem; border: 1px solid rgba(169,188,199,.13); border-radius: 4px; background: rgba(255,255,255,.025); color: #c1cdd1; font-size: 10px; line-height: 1.35; white-space: nowrap; }
+        .world-map-svg { opacity: .27; }
+        .node-ring { animation: market-pulse 3s ease-out infinite; }
+        .premium-row {
+          grid-template-columns: minmax(205px, .95fr) minmax(250px, 1.35fr) minmax(215px, .9fr);
+          padding: 1.8rem 1rem;
+          border-color: var(--surface-border);
+          border-radius: 6px;
+        }
+        .premium-row:first-child { border-top: 1px solid var(--surface-border); }
+        .premium-row:hover { background: linear-gradient(90deg, rgba(205,220,57,.045), rgba(255,255,255,.012)); }
+        .row-left { gap: 1.2rem; }
+        .row-title { font-size: 1.2rem; letter-spacing: -.025em; }
+        .row-text { font-size: .98rem; line-height: 1.7; }
+        .row-right { gap: 1rem; }
+        .mono-tag { line-height: 1.5; }
+        .bento-grid { gap: 1rem; }
+        .bento-card {
+          min-height: 300px;
+          padding: 1.75rem;
+          border-radius: 10px;
+          border-color: var(--surface-border);
+          background: linear-gradient(145deg, rgba(17,37,44,.78), rgba(7,18,23,.82));
+        }
+        .bento-card:hover { border-color: rgba(205,220,57,.27); background: linear-gradient(145deg, rgba(21,43,49,.92), rgba(8,20,25,.92)); }
+        .card-title { font-size: 1.35rem; letter-spacing: -.03em; line-height: 1.25; }
+        .card-text { font-size: .96rem; line-height: 1.7; }
+        .subtle-card { min-height: 205px; }
+        .method-split { gap: clamp(3rem, 8vw, 8rem); }
+        .sticky-side > p {
+          max-width: 470px;
+          margin-top: 1.25rem;
+          color: #aab9bf;
+          font-size: 1rem;
+          line-height: 1.8;
+        }
+        .timeline-list { border-left-color: rgba(157,184,194,.2); }
+        .timeline-step { margin-bottom: 3.5rem; }
+        .massive-number { color: rgba(205,220,57,.22); font-size: 2.8rem; }
+        .timeline-node { border-color: var(--lime); box-shadow: 0 0 12px rgba(205,220,57,.25); }
+        .timeline-title { font-size: 1.35rem; letter-spacing: -.025em; }
+        .timeline-text { max-width: 470px; font-size: .98rem; line-height: 1.7; }
+        .principles-section { position: relative; }
+        .principle-row { min-height: 205px; }
+        .principle-index { color: var(--lime); }
+        .brutalist-cta {
+          padding: clamp(5rem, 9vw, 8rem) 0;
+          border-top: 1px solid var(--surface-border);
+          background:
+            radial-gradient(ellipse at 50% 100%, rgba(205,220,57,.1), transparent 58%),
+            linear-gradient(180deg, rgba(255,255,255,.012), transparent);
+        }
+        .cta-grid-bg { opacity: .1; }
+        .cta-p { line-height: 1.8; }
+        @keyframes market-pulse {
+          0% { opacity: .65; transform: translate(-50%, -50%) scale(.78); }
+          70%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
+        }
+        @media (max-width: 1024px) {
+          .compact-hero { gap: 2.5rem; }
+          .premium-row { grid-template-columns: 1fr; gap: .8rem; padding: 1.5rem 1rem; }
+          .row-left { flex-direction: row; align-items: baseline; }
+          .row-right { justify-content: flex-start; }
+          .split-heading { align-items: start; }
+        }
+        @media (max-width: 768px) {
+          .premium-hero { min-height: auto; padding: 3.5rem 0 3rem; }
+          .compact-hero { gap: 1.6rem; }
+          .premium-override .massive-title { font-size: clamp(3rem, 12vw, 4.7rem); }
+          .premium-override .hero-lede { margin-top: 1.2rem; font-size: 1rem; }
+          .software-showcase { padding: .5rem 0 .5rem .3rem; }
+          .showcase-content { padding: 1rem; }
+          .showcase-window-label, .showcase-window-index { font-size: 7px; }
+          .showcase-kicker { font-size: .95rem; }
+          .showcase-live { max-width: 120px; font-size: 7px; text-align: right; }
+          .showcase-description { font-size: 9px; }
+          .showcase-pathway { grid-template-columns: 22px minmax(0, 1fr); gap: 8px; padding: 10px; }
+          .pathway-action { grid-column: 2; justify-self: start; margin-top: 2px; }
+          .pathway-copy strong { font-size: 11px; }
+          .pathway-copy small { font-size: 9px; }
+          .showcase-footnote { font-size: 6px; }
+          .split-heading { gap: 1rem; margin-bottom: 2rem; }
+          .heading-right-text, .work-heading-aside > p { font-size: .94rem; }
+          .map-wrapper { min-height: 0; grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+          .map-canvas { width: min(100%, 600px); max-width: 600px; }
+          .map-market-list {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .8rem;
+            padding: 1rem .25rem .25rem;
+            border-top: 1px solid var(--surface-border);
+            border-left: 0;
+          }
+          .map-market-region h3 { font-size: 8px; }
+          .map-market-region li { font-size: 9px; }
+          .bento-grid, .bento-grid-2x2 { gap: .85rem; }
+          .bento-card { min-height: 260px; }
+          .subtle-card { min-height: 180px; }
+          .premium-row { padding-inline: .5rem; }
+          .row-left { flex-direction: column; gap: .3rem; }
+          .row-right { flex-wrap: wrap; }
+          .cta-footer-metrics { gap: 1rem; font-size: 8px; }
+        }
+        @media (max-width: 540px) {
+          .map-market-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem .75rem; }
+          .map-market-region:first-child { grid-column: 1 / -1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .reveal-pending { opacity: 1; transform: none; }
+          .is-visible { transition: none; }
+          .node-ring { animation: none; }
+          .premium-btn, .premium-btn-ghost, .icon-smooth, .premium-row, .bento-card {
+            transition: none;
+          }
+          html { scroll-behavior: auto; }
         }
       `}} />
     </main>

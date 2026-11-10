@@ -7,10 +7,11 @@ import { withLocale } from '@/app/i18n';
 
 type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> & LinkProps;
 
-const LocaleLink = forwardRef<HTMLAnchorElement, Props>(function LocaleLink({ href, ...props }, ref) {
+const LocaleLink = forwardRef<HTMLAnchorElement, Props>(function LocaleLink({ href, scroll, ...props }, ref) {
   const locale = useLocale();
   const localizedHref = typeof href === 'string' ? withLocale(href, locale) : href;
-  return <Link href={localizedHref} ref={ref} {...props} />;
+  const hasHash = typeof href === 'string' && href.includes('#');
+  return <Link href={localizedHref} scroll={scroll ?? hasHash} ref={ref} {...props} />;
 });
 
 export default LocaleLink;

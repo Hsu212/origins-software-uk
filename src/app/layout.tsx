@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { ThemeProvider } from '@/app/components/ThemeProvider';
 import CookieConsent from '@/app/components/CookieConsent';
 import AssistantFloating from '@/app/components/AssistantFloating';
+import NexusAnnouncement from '@/app/components/NexusAnnouncement';
+import RouteScrollReset from '@/app/components/RouteScrollReset';
 import { LocaleProvider } from '@/app/components/LocaleProvider';
 import { locales, type Locale } from '@/app/i18n';
 import { localizeMetadata } from './metadata';
@@ -74,7 +76,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
       <body>
         <LocaleProvider locale={locale}>
-          <ThemeProvider>{children}<CookieConsent /><AssistantFloating /></ThemeProvider>
+          <ThemeProvider><RouteScrollReset />{children}<NexusAnnouncement /><CookieConsent /><AssistantFloating /></ThemeProvider>
         </LocaleProvider>
       </body>
     </html>

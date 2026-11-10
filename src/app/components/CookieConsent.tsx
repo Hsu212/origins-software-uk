@@ -22,16 +22,19 @@ export default function CookieConsent() {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [hasSavedChoice, setHasSavedChoice] = useState(false);
   const [choice, setChoice] = useState<Choice>(defaultCookiePreferences);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
-    const initial = readCookiePreferences();
-    if (initial) {
-      setChoice(initial);
-      setHasSavedChoice(true);
-      setBannerOpen(false);
-    } else {
-      setBannerOpen(true);
-    }
+    const frame = window.requestAnimationFrame(() => {
+      const initial = readCookiePreferences();
+      if (initial) {
+        setChoice(initial);
+        setHasSavedChoice(true);
+        setBannerOpen(false);
+      } else {
+        setBannerOpen(true);
+      }
+    });
 
     const syncPreferences = () => {
       const saved = readCookiePreferences();
@@ -54,6 +57,7 @@ export default function CookieConsent() {
     window.addEventListener('storage', syncPreferences);
     window.addEventListener(OPEN_COOKIE_SETTINGS, openPreferences);
     return () => {
+      window.cancelAnimationFrame(frame);
       window.removeEventListener(COOKIE_PREFERENCES_CHANGED, syncPreferences);
       window.removeEventListener('storage', syncPreferences);
       window.removeEventListener(OPEN_COOKIE_SETTINGS, openPreferences);
@@ -94,11 +98,16 @@ export default function CookieConsent() {
   }, [preferencesOpen, hasSavedChoice]);
 
   const commit = useCallback((next: Choice) => {
-    const saved = saveCookiePreferences(next);
-    setChoice(saved);
-    setHasSavedChoice(true);
-    setBannerOpen(false);
-    setPreferencesOpen(false);
+    try {
+      const saved = saveCookiePreferences(next);
+      setChoice(saved);
+      setHasSavedChoice(true);
+      setBannerOpen(false);
+      setPreferencesOpen(false);
+      setSaveError(false);
+    } catch {
+      setSaveError(true);
+    }
   }, []);
 
   if (!bannerOpen && !preferencesOpen) return null;
@@ -118,6 +127,7 @@ export default function CookieConsent() {
             <button className="cookie-button" onClick={() => commit({ necessary: true, analytics: false, marketing: false })}>{localized('Reject optional')}</button>
             <button className="cookie-text-button" onClick={() => setPreferencesOpen(true)}>{localized('Customise')}</button>
           </div>
+          {saveError && <p className="cookie-save-error" role="alert">{localized('Could not save your settings. Your changes remain on this page. Check browser storage and try again.')}</p>}
         </section>
       )}
 
@@ -145,6 +155,7 @@ export default function CookieConsent() {
               <button className="cookie-button" onClick={() => commit({ necessary: true, analytics: false, marketing: false })}>{localized('Reject optional')}</button>
               <button className="cookie-button cookie-button-primary" onClick={() => commit(choice)}>{localized('Save preferences')}</button>
             </div>
+            {saveError && <p className="cookie-save-error" role="alert">{localized('Could not save your settings. Your changes remain on this page. Check browser storage and try again.')}</p>}
             <p className="cookie-storage-note">{localized('Your preference is saved in this browser for up to 12 months.')} <Link href="/legal/cookies">{localized('Cookie policy')}</Link></p>
           </section>
         </div>

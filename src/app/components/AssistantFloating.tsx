@@ -2,12 +2,19 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent, KeyboardEvent } from 'react';
+import Image from 'next/image';
 import Link from '@/app/components/LocaleLink';
 import { localeNames, locales, translate } from '@/app/i18n';
+import { findEmbeddedFaq, getEmbeddedFaq, suggestedQuestions } from '@/app/data/assistantFaq';
 import { useLocale } from './LocaleProvider';
 
 type ChatRole = 'user' | 'assistant';
-type ChatMessage = { id: string; role: ChatRole; content: string; sources?: string[] };
+type ChatMessage = {
+  id: string;
+  role: ChatRole;
+  content: string;
+  link?: { href: string; label: string };
+};
 
 const WELCOME_MESSAGE: ChatMessage = {
   id: 'origins-welcome',
@@ -31,26 +38,11 @@ export default function AssistantFloating() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([welcomeMessage]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [sessionId, setSessionId] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const wasOpenRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement>(null);
-  const abortRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    const storageKey = 'origins-assistant-session-id';
-    try {
-      const current = sessionStorage.getItem(storageKey) || createSessionId();
-      sessionStorage.setItem(storageKey, current);
-      setSessionId(current);
-    } catch {
-      setSessionId(createSessionId());
-    }
-    return () => abortRef.current?.abort();
-  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -61,81 +53,50 @@ export default function AssistantFloating() {
     wasOpenRef.current = true;
     inputRef.current?.focus();
     const closeOnEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape' && !isLoading) setIsOpen(false);
+      if (event.key === 'Escape') setIsOpen(false);
     };
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [isOpen, isLoading]);
+  }, [isOpen]);
 
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: (window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'reduce') ? 'auto' : 'smooth' });
-  }, [messages, isLoading]);
+  }, [messages]);
 
-  const sendMessage = async (event?: FormEvent<HTMLFormElement>) => {
+  const askQuestion = (question: string) => {
+    const answer = findEmbeddedFaq(question, locale);
+    const response: ChatMessage = answer
+      ? {
+          id: createSessionId(),
+          role: 'assistant',
+          content: answer.answer,
+          ...(answer.href && answer.linkLabel ? { link: { href: answer.href, label: answer.linkLabel } } : {}),
+        }
+      : {
+          id: createSessionId(),
+          role: 'assistant',
+          content: localized('I don’t have a verified answer for that question yet. Please contact our team and we’ll be happy to help.'),
+          link: { href: '/contact', label: localized('Contact Origins') },
+        };
+    setMessages((current) => [
+      ...current,
+      { id: createSessionId(), role: 'user', content: question },
+      response,
+    ]);
+  };
+
+  const sendMessage = (event?: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
     const message = input.trim();
-    if (!message || isLoading) return;
+    if (!message) return;
     if (message.length > 4000) {
-      setErrorMessage('Please keep each message under 4,000 characters.');
+      setErrorMessage(localized('Please keep each message under 4,000 characters.'));
       return;
     }
 
-    const nextUserMessage: ChatMessage = { id: createSessionId(), role: 'user', content: message };
-    const history = messages.filter((item) => item.id !== WELCOME_MESSAGE.id).slice(-10).map(({ role, content }) => ({ role, content }));
-    setMessages((current) => [...current, nextUserMessage]);
     setInput('');
     setErrorMessage('');
-    setIsLoading(true);
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-    const timeout = window.setTimeout(() => controller.abort(), 35000);
-
-    try {
-      const response = await fetch('/api/assistant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          message,
-          conversationHistory: history,
-          sessionId,
-          pageUrl: window.location.href,
-          locale,
-        }),
-        signal: controller.signal,
-      });
-      const data = await response.json().catch(() => ({})) as {
-        answer?: unknown;
-        error?: unknown;
-        sources?: unknown;
-      };
-      if (!response.ok) {
-        throw new Error(typeof data.error === 'string' ? data.error : 'The assistant could not answer just now. Please try again.');
-      }
-      if (typeof data.answer !== 'string' || !data.answer.trim()) {
-        throw new Error('The assistant returned an empty response. Please try again.');
-      }
-      const sources = Array.isArray(data.sources)
-        ? data.sources.filter((source): source is string => typeof source === 'string').slice(0, 5)
-        : [];
-      setMessages((current) => [...current, {
-        id: createSessionId(),
-        role: 'assistant',
-        content: data.answer as string,
-        ...(sources.length ? { sources } : {}),
-      }]);
-    } catch (error) {
-      const messageText = error instanceof Error && error.name === 'AbortError'
-        ? 'The assistant took too long to respond. Please try again.'
-        : error instanceof Error
-          ? error.message
-          : 'I can’t connect to the assistant service right now. Please try again later.';
-      setErrorMessage(messageText);
-    } finally {
-      window.clearTimeout(timeout);
-      setIsLoading(false);
-      abortRef.current = null;
-    }
+    askQuestion(message);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -146,12 +107,15 @@ export default function AssistantFloating() {
   };
 
   const resetConversation = () => {
-    if (isLoading) return;
     setMessages([welcomeMessage]);
     setInput('');
     setErrorMessage('');
-    setIsLoading(false);
   };
+
+  const faq = getEmbeddedFaq(locale);
+  const suggestedFaq = suggestedQuestions
+    .map((question) => faq.find((item) => item.question === localized(question)))
+    .filter((item): item is NonNullable<typeof item> => item !== undefined);
 
   return (
     <div className="origins-assistant-root">
@@ -170,12 +134,14 @@ export default function AssistantFloating() {
       {isOpen && (
         <section className="origins-assistant-panel" role="dialog" aria-modal="false" aria-labelledby="origins-assistant-title">
           <header className="origins-assistant-header">
-            <div className="origins-assistant-mark" aria-hidden="true">O.</div>
+            <div className="origins-assistant-mark" aria-hidden="true">
+              <Image src="/origins-icon.png" alt="" width={30} height={30} />
+            </div>
             <div className="origins-assistant-heading">
               <h2 id="origins-assistant-title">{localized('Origins Assistant')}</h2>
-              <p><span className="origins-assistant-status-dot" /> {localized('Knowledge assistant')}</p>
+              <p><span className="origins-assistant-status-dot" /> {localized('Company FAQ assistant')} <span className="origins-assistant-local-badge">{localized('LOCAL')}</span></p>
             </div>
-            <button type="button" className="origins-assistant-icon-button" onClick={resetConversation} disabled={isLoading} aria-label={localized('Clear conversation')} title={localized('Clear conversation')}>↺</button>
+            <button type="button" className="origins-assistant-icon-button" onClick={resetConversation} aria-label={localized('Clear conversation')} title={localized('Clear conversation')}>↺</button>
             <button type="button" className="origins-assistant-icon-button" onClick={() => setIsOpen(false)} aria-label={localized('Close assistant')}>×</button>
           </header>
 
@@ -193,16 +159,29 @@ export default function AssistantFloating() {
           <div className="origins-assistant-messages" ref={messagesRef} aria-label={localized('Conversation')} aria-live="polite" aria-relevant="additions text">
             {messages.map((message) => (
               <article key={message.id} className={`origins-assistant-message origins-assistant-message-${message.role}`}>
-                {message.role === 'assistant' && <span className="origins-assistant-avatar" aria-hidden="true">O</span>}
+                {message.role === 'assistant' && (
+                  <span className="origins-assistant-avatar" aria-hidden="true">
+                    <Image src="/origins-icon.png" alt="" width={19} height={19} />
+                  </span>
+                )}
                 <div className="origins-assistant-message-content">
                   <p>{message.content}</p>
-                  {message.sources && message.sources.length > 0 && (
-                    <div className="origins-assistant-sources"><span>{localized('Sources')}</span>{message.sources.map((source, index) => <p key={`${source}-${index}`}>{source}</p>)}</div>
+                  {message.link && (
+                    message.link.href.startsWith('mailto:') || message.link.href.startsWith('https://')
+                      ? <a className="origins-assistant-answer-link" href={message.link.href} target={message.link.href.startsWith('https://') ? '_blank' : undefined} rel={message.link.href.startsWith('https://') ? 'noreferrer' : undefined}>{message.link.label} <span aria-hidden="true">↗</span></a>
+                      : <Link className="origins-assistant-answer-link" href={message.link.href}>{message.link.label} <span aria-hidden="true">↗</span></Link>
                   )}
                 </div>
               </article>
             ))}
-            {isLoading && <div className="origins-assistant-loading" role="status"><span /><span /><span /> <em>{localized('Searching the knowledge base…')}</em></div>}
+            {messages.length === 1 && suggestedFaq.length > 0 && (
+              <div className="origins-assistant-suggestions" aria-label={localized('Suggested questions')}>
+                <p>{localized('Suggested questions')}</p>
+                {suggestedFaq.map((item) => (
+                  <button type="button" key={item.id} onClick={() => askQuestion(item.question)}>{item.question}</button>
+                ))}
+              </div>
+            )}
           </div>
 
           {errorMessage && <p className="origins-assistant-error" role="alert">{errorMessage}</p>}
@@ -217,12 +196,11 @@ export default function AssistantFloating() {
               onKeyDown={handleKeyDown}
               placeholder={localized('Ask about Origins…')}
               maxLength={4000}
-              disabled={isLoading}
               autoComplete="off"
             />
-            <button type="submit" disabled={!input.trim() || isLoading} aria-label={localized('Send message')}>↗</button>
+            <button type="submit" disabled={!input.trim()} aria-label={localized('Send message')}>↗</button>
           </form>
-          <footer className="origins-assistant-footer">{localized('AI-generated responses may be inaccurate.')} <Link href="/settings">{localized('Privacy & settings')}</Link></footer>
+          <footer className="origins-assistant-footer">{localized('Answers come from reviewed company FAQs; no generative AI is used.')} <Link href="/settings">{localized('Privacy & settings')}</Link></footer>
         </section>
       )}
     </div>
