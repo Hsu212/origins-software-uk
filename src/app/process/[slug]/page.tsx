@@ -32,7 +32,42 @@ export default async function ProcessStagePage({ params }: Props) {
       <div className="detail-list">{stage.outputs.map((output, index) => <article className="detail-list-row" key={output} data-motion><span>{String(index + 1).padStart(2, '0')}</span><h3><LocalizedText text={output} /></h3><span className="detail-list-mark" aria-hidden="true">↗</span></article>)}</div>
     </section>
     <section className="detail-principles-band"><div className="content-section detail-principles-inner"><div><div className="section-kicker"><LocalizedText text="Working principles" /></div><h2><LocalizedText text="Good delivery is a series of clear choices." /></h2></div><ul>{stage.principles.map((principle) => <li key={principle}><LocalizedText text={principle} /></li>)}</ul></div></section>
-    <section className="content-section process-step-navigation"><Link href={currentIndex > 0 ? `/process/${processStages[currentIndex - 1].slug}` : '/process'} className="button-secondary">← <LocalizedText text={currentIndex > 0 ? processStages[currentIndex - 1].subtitle : 'All process stages'} /></Link>{nextStage && <Link href={`/process/${nextStage.slug}`} className="button-secondary"><LocalizedText text={`Next: ${nextStage.subtitle}`} /> <span aria-hidden="true">↗</span></Link>}</section>
+   {/* Using case-cta class to automatically split left (text) and right (buttons) on desktop */}
+    <section className="content-section case-cta process-step-navigation" style={{ borderTop: '1px solid rgba(169,188,199,0.08)', paddingTop: '4rem' }}>
+      <div>
+        <div className="section-kicker"><LocalizedText text="Process timeline" /></div>
+        <h2><LocalizedText text="Review the other delivery stages." /></h2>
+      </div>
+      
+      {/* Container ensures buttons don't stretch and sit neatly side-by-side */}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <Link 
+          href={currentIndex > 0 ? `/process/${processStages[currentIndex - 1].slug}` : '/process'} 
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px', 
+            padding: '6px 12px', fontSize: '11px', fontWeight: 500, letterSpacing: '0.02em',
+            border: '1px solid rgba(169,188,199,0.15)', borderRadius: '999px', 
+            color: '#9aabb2', textDecoration: 'none', background: 'transparent'
+          }}
+        >
+          <span aria-hidden="true">←</span> <LocalizedText text={currentIndex > 0 ? processStages[currentIndex - 1].subtitle : 'All stages'} />
+        </Link>
+        
+        {nextStage && (
+          <Link 
+            href={`/process/${nextStage.slug}`} 
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px', 
+              padding: '6px 12px', fontSize: '11px', fontWeight: 500, letterSpacing: '0.02em',
+              border: '1px solid rgba(205, 220, 57, 0.25)', borderRadius: '999px', 
+              color: '#c8ff00', textDecoration: 'none', background: 'rgba(205, 220, 57, 0.05)'
+            }}
+          >
+            <LocalizedText text={`Next: ${nextStage.subtitle}`} /> <span aria-hidden="true">↗</span>
+          </Link>
+        )}
+      </div>
+    </section>
     <section className="content-section case-cta">
       <div>
         <div className="section-kicker"><LocalizedText text="A good place to start" /></div>
