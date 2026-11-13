@@ -51,7 +51,6 @@ function groupIsActive(pathname: string, group: typeof menuGroups[number], local
     (group.key === 'work' && pathIsActive(pathname, localePath('/work', locale)));
 }
 
-// 1. Add the onOpen prop to the component signature
 function LanguagePicker({ locale, pathname, mobile = false, onOpen }: { locale: Locale; pathname: string; mobile?: boolean; onOpen?: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [opensAbove, setOpensAbove] = useState(false);
@@ -62,7 +61,6 @@ function LanguagePicker({ locale, pathname, mobile = false, onOpen }: { locale: 
   const menuId = mobile ? 'language-picker-menu-mobile' : 'language-picker-menu';
 
   const toggleMenu = () => {
-    // 2. Trigger the callback to close mega menus before opening
     if (!isOpen) onOpen?.(); 
     
     if (isOpen) {
@@ -85,11 +83,9 @@ function LanguagePicker({ locale, pathname, mobile = false, onOpen }: { locale: 
 
   useEffect(() => {
     if (!isOpen) return;
-
     const closeOnOutsideClick = (event: PointerEvent) => {
       if (event.target instanceof Node && !pickerRef.current?.contains(event.target)) setIsOpen(false);
     };
-
     document.addEventListener('pointerdown', closeOnOutsideClick);
     return () => document.removeEventListener('pointerdown', closeOnOutsideClick);
   }, [isOpen]);
@@ -220,8 +216,13 @@ export default function SiteHeader() {
   return (
     <>
       <a className="skip-link" href="#main-content">{localized('Skip to content')}</a>
+      
+      {/* 
+        We added "floating-capsule" to trigger the new desktop styles, 
+        and refactored the inner structure to logically group Left / Center / Right
+      */}
       <header
-        className={`company-site-header${openMenu ? ' has-open-menu' : ''}`}
+        className={`company-site-header floating-capsule ${openMenu ? ' has-open-menu' : ''}`}
         id="top"
         onMouseLeave={() => setOpenMenu(null)}
         onKeyDown={handleKeyDown}
@@ -230,11 +231,29 @@ export default function SiteHeader() {
         }}
       >
         <div className="site-nav-inner">
-          <Link href="/" className="brand" aria-label={localized('Origins Software home')} onClick={() => { setOpenMenu(null); setMobileOpen(false); }}>
-            <BrandLockup />
-          </Link>
+          
+          {/* LEFT: Logo Area */}
+          <div className="header-left">
+            <Link 
+              href="/" 
+              className="brand" 
+              aria-label={localized('Origins Software home')} 
+              onClick={(e) => { 
+                // If already on the homepage, scroll to the top smoothly
+                if (pathname === '/' || pathname === `/${locale}`) {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                setOpenMenu(null); 
+                setMobileOpen(false); 
+              }}
+            >
+              <BrandLockup />
+            </Link>
+          </div>
 
-          <nav className="desktop-nav" aria-label={localized('Primary navigation')}>
+          {/* CENTER: Navigation Links */}
+          <nav className="desktop-nav glass-nav-pill" aria-label={localized('Primary navigation')}>
             {menuGroups.map((group) => (
               <div
                 className={`desktop-nav-item${groupIsActive(pathname, group, locale) ? ' is-active' : ''}${openMenu === group.key ? ' is-open' : ''}`}
@@ -262,17 +281,15 @@ export default function SiteHeader() {
             <Link href="/about" className={`desktop-nav-link desktop-nav-about${pathIsActive(pathname, localePath('/about', locale)) ? ' is-active' : ''}`}>{localized('About')}</Link>
           </nav>
 
-         {/* Add onMouseEnter to smoothly close mega menu when hovering away from links */}
-          <div className="desktop-nav-actions" onMouseEnter={() => setOpenMenu(null)}>
+          {/* RIGHT: Actions */}
+          <div className="header-right desktop-nav-actions" onMouseEnter={() => setOpenMenu(null)}>
             <span className="nav-status"><span className="nav-status-dot" /> {localized('UK / Global delivery')}</span>
-            
-            {/* Pass the onOpen callback to close the mega menu on click/focus */}
             <LanguagePicker locale={locale} pathname={pathname || '/'} onOpen={() => setOpenMenu(null)} />
-            
             <a href={clientPortalUrl} className="nav-quiet" target="_blank" rel="noreferrer">{localized('Client portal')} <span aria-hidden="true">↗</span></a>
             <Link href="/contact" className="nav-cta">{localized('Start a project')} <span aria-hidden="true">↗</span></Link>
           </div>
 
+          {/* MOBILE ONLY: Hamburger Menu */}
           <button
             type="button"
             className="menu-button"
@@ -286,6 +303,7 @@ export default function SiteHeader() {
           </button>
         </div>
 
+        {/* MEGA MENU: Drops down seamlessly from the capsule */}
         {activeGroup && (
           <div className={`mega-menu mega-menu-${activeGroup.key} is-open`} id="desktop-mega-menu" role="region" aria-label={`${localized(activeGroup.label)} ${localized('quick navigation')}`}>
             <div className="mega-menu-inner">
@@ -312,6 +330,7 @@ export default function SiteHeader() {
           </div>
         )}
 
+        {/* MOBILE MENU */}
         <nav id="mobile-navigation" className={`mobile-nav-panel ${mobileOpen ? 'is-open' : ''}`} aria-label={localized('Mobile navigation')} aria-hidden={!mobileOpen}>
           {menuGroups.map((group) => (
             <div className="mobile-nav-group" key={group.key}>
@@ -321,7 +340,6 @@ export default function SiteHeader() {
               </div>
               {openMobileGroup === group.key && (
                 <div className="mobile-subnav-wrapper" id={`mobile-${group.key}-submenu`}>
-                  {/* Primary items list */}
                   <div className="mobile-subnav">
                     {group.items.map((item) => (
                       <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)} tabIndex={mobileOpen ? 0 : -1}>
@@ -330,7 +348,6 @@ export default function SiteHeader() {
                     ))}
                   </div>
                   
-                  {/* Secondary items list (separated visually) */}
                   <div className="mobile-subnav-secondary">
                     <Link href={group.href} className="mobile-explore-link" onClick={() => setMobileOpen(false)} tabIndex={mobileOpen ? 0 : -1}>
                       {localized(`Explore ${group.label.toLowerCase()}`)} <span aria-hidden="true">↗</span>
