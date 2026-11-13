@@ -2808,3 +2808,485 @@ html[data-motion="reduce"] [data-motion] { opacity: 1 !important; filter: none !
 .origins-assistant-launcher:hover svg {
   stroke: var(--lime) !important;
 }
+
+/* ========================================================
+   DESKTOP REDESIGN: FLOATING GLASS CAPSULE (FINAL)
+   ======================================================== */
+@media (min-width: 821px) {
+  /* 1. The Main Capsule */
+  .company-site-header.floating-capsule {
+    top: 1.5rem !important;
+    width: min(1360px, calc(100% - 3rem)) !important;
+    margin: 0 auto;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(7, 17, 22, 0.75) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* 2. Flexbox Layout (Fixes the crushed center) */
+  .company-site-header.floating-capsule .site-nav-inner {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    height: 72px !important;
+    padding: 0 1rem 0 1.5rem !important;
+  }
+
+  .header-left { flex: 0 0 auto; }
+
+  /* 3. Center Nav (Frosted Inner Container) */
+  .glass-nav-pill {
+    display: flex !important;
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 999px !important;
+    padding: 6px !important;
+    gap: 4px !important;
+  }
+
+  .company-site-header.floating-capsule .desktop-nav-item {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Frosted Hover Pills for individual links */
+  .company-site-header.floating-capsule .desktop-nav-link {
+    padding: 8px 18px !important;
+    border-radius: 999px !important;
+    color: #A1B3BA !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  /* Hide old underline */
+  .company-site-header.floating-capsule .desktop-nav-link::after { display: none !important; } 
+  
+  .company-site-header.floating-capsule .desktop-nav-item:hover .desktop-nav-link,
+  .company-site-header.floating-capsule .desktop-nav-item.is-open .desktop-nav-link,
+  .company-site-header.floating-capsule .desktop-nav-link.is-active {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+  }
+
+  /* Tuck the dropdown arrow into the pill nicely */
+  .company-site-header.floating-capsule .nav-menu-toggle {
+    margin-left: -12px !important;
+    padding-right: 12px !important;
+    z-index: 2;
+  }
+
+  /* 4. Right Actions */
+  .header-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  /* Status Badge */
+  .company-site-header.floating-capsule .nav-status {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 8px 16px !important;
+    border-radius: 999px !important;
+    color: #A1B3BA !important;
+    font-size: 11px !important;
+  }
+
+  /* Client Portal Button */
+  .company-site-header.floating-capsule .nav-quiet {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    transition: all 0.2s ease !important;
+  }
+  .company-site-header.floating-capsule .nav-quiet:hover {
+    background: rgba(205, 220, 57, 0.1) !important;
+    border-color: var(--lime) !important;
+    color: var(--lime) !important;
+  }
+
+  /* Start a Project (Neon) */
+  .company-site-header.floating-capsule .nav-cta {
+    min-height: 40px !important;
+    padding: 0 24px !important;
+    background: var(--lime) !important;
+    color: #000000 !important;
+    border: none !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    border-radius: 999px !important;
+  }
+  .company-site-header.floating-capsule .nav-cta:hover {
+    background: #d4ff33 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(205, 220, 57, 0.3) !important;
+  }
+
+  /* Match Language Picker to Button Heights */
+  .company-site-header.floating-capsule .language-picker-control {
+    height: 40px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Mega Menu Alignment */
+  .company-site-header.floating-capsule .mega-menu {
+    top: calc(100% + 1.25rem) !important;
+    border-radius: 20px !important;
+    width: 100% !important;
+    border: 1px solid rgba(169, 188, 199, 0.15) !important;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  /* Hide status badge on tighter screens to prevent UI crushing */
+  @media (max-width: 1280px) {
+    .company-site-header.floating-capsule .nav-status { display: none !important; }
+  }
+}
+/* ========================================================
+   MOBILE REDESIGN: TOP BAR GLASSMORPHISM
+   ======================================================== */
+@media (max-width: 820px) {
+  /* 1. True glassmorphism for the top bar (Logo & Hamburger only) */
+  .company-site-header {
+    background: rgba(4, 14, 19, 0.65) !important; /* Lower opacity reveals the blur */
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* 2. Completely solid background for the dropdown menu (so titles don't blur/overlap) */
+  .mobile-nav-panel {
+    background: #050d11 !important; /* Solid dark theme color, no transparency */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(169, 188, 199, 0.15) !important;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8) !important;
+  }
+}
+/* ========================================================
+   MOBILE REDESIGN: MENU TYPOGRAPHY & SPACING
+   ======================================================== */
+@media (max-width: 820px) {
+  /* 1. Base Panel Padding & Shape */
+  .mobile-nav-panel {
+    padding: 1rem 0.5rem 2rem !important;
+    border-radius: 0 0 20px 20px !important;
+  }
+
+  /* 2. Main Navigation Titles (Services, Work, Process) */
+  .mobile-nav-group-row > a {
+    font-size: 22px !important;
+    font-weight: 500 !important;
+    color: #E9EFF2 !important;
+    padding: 18px 12px !important;
+    letter-spacing: -0.02em !important;
+  }
+  
+  .mobile-nav-group-row > a.is-active,
+  .mobile-nav-group-row > a:hover {
+    color: var(--lime) !important;
+  }
+
+  /* Expand/Collapse Toggle Button (+ / -) */
+  .mobile-nav-group-row > button {
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    padding-right: 12px !important;
+    color: #6F8792 !important;
+  }
+  .mobile-nav-group-row > button[aria-expanded="true"] {
+    color: var(--lime) !important;
+  }
+
+  /* 3. Submenu Items (Inner drop-down lists) */
+  .mobile-subnav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 4px 12px 16px 24px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-left: 16px !important;
+  }
+
+  .mobile-subnav a {
+    font-size: 14.5px !important;
+    padding: 12px 0 !important;
+    color: #9BAFBA !important;
+    border: none !important;
+  }
+  .mobile-subnav a:hover {
+    color: #ffffff !important;
+  }
+
+  /* 4. Secondary Action Sub-box (Inside accordions) */
+  .mobile-subnav-secondary {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 16px !important;
+    margin: 0 12px 16px 16px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .mobile-subnav-secondary a {
+    font-size: 13.5px !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 8px 0 !important;
+  }
+  
+  /* 5. Bottom Standalone Links (About, Client Portal) */
+  .mobile-nav-panel > a:not(.nav-cta) {
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    color: #E9EFF2 !important;
+    padding: 18px 12px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* 6. Language Picker Spacing */
+  .mobile-language-picker {
+    padding: 20px 12px !important;
+    border-bottom: none !important;
+  }
+  .mobile-language-label {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #E9EFF2 !important;
+  }
+
+  /* 7. The Main CTA Button at the bottom */
+  .mobile-nav-panel .mobile-cta {
+    margin: 12px 12px 0 !important;
+    width: calc(100% - 24px) !important;
+    font-size: 15px !important;
+    padding: 16px !important;
+    justify-content: center !important;
+  }
+}
+/* ========================================================
+   BUG FIX: DESKTOP GAP & MOBILE HIT-BOXES
+   ======================================================== */
+
+/* 1. Desktop Fix: Creates an invisible bridge so the menu doesn't vanish */
+@media (min-width: 821px) {
+  .company-site-header.floating-capsule .mega-menu::before {
+    content: "";
+    position: absolute;
+    top: -2rem; /* Covers the empty space gap */
+    left: 0;
+    right: 0;
+    height: 2rem;
+    background: transparent;
+    z-index: -1;
+  }
+}
+
+/* 2. Mobile Fix: Restores full-width touch targets so titles are tappable */
+@media (max-width: 820px) {
+  .mobile-subnav a,
+  .mobile-subnav-secondary a {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    position: relative !important;
+    z-index: 10 !important;
+  }
+  
+  /* Ensure the arrow stays on the far right */
+  .mobile-subnav a span,
+  .mobile-subnav-secondary a span {
+    display: inline-block !important;
+    margin-left: auto !important;
+  }
+}
+/* ========================================================
+   NEXUS ORIGINS POP-UP AD MODAL
+   ======================================================== */
+.nexus-ad-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.nexus-ad-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 11, 14, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: origins-fade-in 0.4s ease-out;
+}
+
+.nexus-ad-modal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: linear-gradient(145deg, rgba(13, 29, 36, 0.95), rgba(6, 17, 22, 0.98));
+  border: 1px solid rgba(205, 220, 57, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: origins-assistant-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Close Button (Top Right) */
+.nexus-ad-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(169, 188, 199, 0.2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  color: #9BAFBA;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+.nexus-ad-close:hover {
+  background: rgba(205, 220, 57, 0.1);
+  border-color: var(--lime);
+  color: var(--lime);
+  transform: scale(1.05);
+}
+
+.nexus-ad-content {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2.5rem;
+  padding: 3rem;
+}
+
+.nexus-ad-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+.nexus-icon {
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: #000;
+  object-fit: cover;
+}
+
+.nexus-ad-intro {
+  color: #A1B3BA;
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.nexus-ad-subheading {
+  color: #E9EFF2;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.01em;
+}
+
+/* Feature List */
+.nexus-ad-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.5rem 0;
+  display: grid;
+  gap: 0.85rem;
+}
+.nexus-ad-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: #8FA4AE;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.nexus-ad-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--lime);
+}
+.nexus-ad-list strong {
+  color: #DCE4E8;
+  font-weight: 500;
+}
+
+/* Meta Data Box (License & Distribution) */
+.nexus-ad-meta {
+  background: rgba(4, 11, 14, 0.6);
+  border: 1px solid rgba(169, 188, 199, 0.12);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  display: grid;
+  gap: 0.75rem;
+}
+.nexus-ad-meta p {
+  margin: 0;
+  color: #718892;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.nexus-ad-meta strong {
+  color: #A1B3BA;
+  font-family: var(--font-code);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+
+.nexus-ad-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Responsive Scaling */
+@media (max-width: 820px) {
+  .nexus-ad-content {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  .nexus-ad-visual {
+    padding-top: 0;
+  }
+  .nexus-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 16px;
+  }
+  .nexus-ad-modal {
+    max-height: 85vh;
+  }
+  .nexus-ad-actions .button {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
