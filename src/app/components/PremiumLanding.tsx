@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from '@/app/components/LocaleLink';
 import { translate } from '@/app/i18n';
 import { useLocale } from './LocaleProvider';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import SiteFooter from '@/app/components/SiteFooter';
 import SiteHeader from '@/app/components/SiteHeader';
 
@@ -88,6 +88,13 @@ export default function PremiumLanding() {
   const locale = useLocale();
   const localized = (text: string) => translate(locale, text);
 
+  const [showNexusAd, setShowNexusAd] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowNexusAd(true), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
     if (!('IntersectionObserver' in window)) {
@@ -113,7 +120,7 @@ export default function PremiumLanding() {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
-
+  
   return (
     <main className="origins-landing premium-override" id="main-content">
       <SiteHeader/>
@@ -186,25 +193,70 @@ export default function PremiumLanding() {
         </div>
       </section>
 
-      {/* --- PREMIUM PARTNERSHIP / ECOSYSTEM SECTION --- */}
-      <section className="ecosystem-section" aria-label={localized('Technology Partners')} data-reveal>
-        <div className="ecosystem-inner shell">
-          <p className="mono-accent ecosystem-title">{localized('Technology Partners')}</p>
-          <div className="partner-groups">
-            {partnerGroups.map(({ label, partners }) => (
-              <div className="partner-group" key={label}>
-                <h3 className="partner-group-label">{localized(label)}</h3>
-                <div className="partner-chip-list">
-                  {partners.map((partner) => (
-                    <span className="partner-chip" key={partner.name}>
-                      <Image src={`/partner-logos/${partner.icon}.svg`} alt="" aria-hidden="true" width={18} height={18} className={`partner-chip-icon partner-chip-icon-${partner.icon}`} />
-                      <span>{partner.name}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+      {/* --- COMPANY IDENTITY SECTION --- */}
+      <section className="identity-section shell tight-section" aria-label={localized('Company Vision and Mission')} data-reveal>
+        <div className="section-heading split-heading align-top">
+          <div className="heading-left">
+            <div className="eyebrow mono-accent">{localized('Who We Are')}</div>
+            <h2 className="premium-h2">{localized('Engineer with')}<br /><em className="italic-accent">{localized('intent.')}</em></h2>
           </div>
+        </div>
+
+        <div className="identity-layout">
+          <div className="identity-grid-top">
+            
+            {/* Vision */}
+            <article className="bento-card identity-card">
+              <div className="card-header">
+                <span className="principle-index mono-accent">01</span>
+                <div className="tech-line"></div>
+              </div>
+              <h3 className="card-title">{localized('Vision')}</h3>
+              <p className="card-text">
+                {localized("Origins Software Studio builds AI-powered software that turns static data into living, intelligent systems — starting with construction. Through StrueueAI, we're automating the 2D-to-3D BIM process that has cost the industry billions in manual rework, and we're expanding that same engineering rigor across custom web architecture, autonomous AI agents, and computer vision for enterprise clients.")}
+              </p>
+            </article>
+
+            {/* Mission */}
+            <article className="bento-card identity-card">
+              <div className="card-header">
+                <span className="principle-index mono-accent">02</span>
+                <div className="tech-line"></div>
+              </div>
+              <h3 className="card-title">{localized('Mission')}</h3>
+              <p className="card-text">
+                {localized("We deliver productized, enterprise-grade software with zero outsourcing, fixed pricing, and predictable sprint timelines. Every line of code is built by our internal core engineering team — no agencies, no handoffs, no surprises. We own the full stack so our clients own the IP.")}
+              </p>
+            </article>
+          </div>
+
+          {/* Operating Principles */}
+          <article className="bento-card identity-card-full">
+            <div className="card-header">
+              <span className="principle-index mono-accent">03</span>
+              <div className="tech-line"></div>
+            </div>
+            <h3 className="card-title">{localized('Operating Principles')}</h3>
+            
+            <div className="principles-mini-grid">
+              <div className="mini-principle">
+                <strong>{localized('Fixed Price & Scope')} <span className="principle-separator">—</span></strong>
+                <span>{localized('Transparent tiered pricing, no hourly overruns')}</span>
+              </div>
+              <div className="mini-principle">
+                <strong>{localized('Zero Outsourcing')} <span className="principle-separator">—</span></strong>
+                <span>{localized('100% internal engineering')}</span>
+              </div>
+              <div className="mini-principle">
+                <strong>{localized('Predictable Delivery')} <span className="principle-separator">—</span></strong>
+                <span>{localized('7-day web presence to 8-week AI models')}</span>
+              </div>
+              <div className="mini-principle">
+                <strong>{localized('Full IP Transfer')} <span className="principle-separator">—</span></strong>
+                <span>{localized('Source code ownership released on final milestone')}</span>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -376,6 +428,57 @@ export default function PremiumLanding() {
         </div>
       </section>
 
+      {/* --- NEXUS ORIGINS POP-UP AD --- */}
+      {showNexusAd && (
+        <div className="nexus-ad-overlay" role="dialog" aria-modal="true" aria-labelledby="nexus-ad-title">
+          <div className="nexus-ad-backdrop" onClick={() => setShowNexusAd(false)}></div>
+          <div className="nexus-ad-modal">
+            
+           <div className="nexus-ad-content">
+              
+              <div className="nexus-ad-visual">
+                {/* THIS IS THE LINE YOU NEED TO CHECK 👇 */}
+                <Image src="/nexus-icon.png" alt="Nexus Origins" width={180} height={180} className="nexus-icon" priority />
+              </div>
+              
+              <div className="nexus-ad-body">
+                <div className="eyebrow mono-accent pulse-text" style={{ marginBottom: '12px' }}>{localized('NEW RELEASE')}</div>     <h2 id="nexus-ad-title" className="premium-h2" style={{ fontSize: '2.4rem', marginBottom: '1rem' }}>
+                  Nexus <em className="italic-accent">Origins.</em>
+                </h2>
+                <p className="nexus-ad-intro">
+                  {localized('A unified desktop platform for cloud secrets management, access control, auditing, and developer tooling. Nexus brings project and environment management, secure secrets workflows, access administration, audit visibility, and Origins Forge into one desktop experience. Designed for teams that need a centralized cloud control plane alongside local developer tooling.')}
+                </p>
+                
+                <h3 className="nexus-ad-subheading">{localized('Key features')}</h3>
+                <ul className="nexus-ad-list">
+                  <li><strong>{localized('Project Management')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('organize projects and environments in one workspace')}</li>
+                  <li><strong>{localized('Secrets Management')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('manage environment secrets through the cloud service')}</li>
+                  <li><strong>{localized('Access Control')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('manage authorized access to projects and environments')}</li>
+                  <li><strong>{localized('Audit Trail')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('review recorded activities and security-relevant events')}</li>
+                  <li><strong>{localized('API Token Management')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('manage supported API token workflows')}</li>
+                  <li><strong>{localized('Origins Forge')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('access local developer tooling from the desktop app')}</li>
+                  <li><strong>{localized('Cloud Integration')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('connect to Origins Cloud for authentication and centralized data management')}</li>
+                  <li><strong>{localized('Desktop Experience')}</strong> <span className="mono-accent" style={{fontSize: '9px'}}>—</span> {localized('dedicated macOS application built around the Origins Unified interface')}</li>
+                </ul>
+
+                <div className="nexus-ad-meta">
+                  <p><strong>{localized('Distribution')}:</strong> {localized('macOS disk image (.dmg) via GitHub Releases.')}</p>
+                  <p><strong>{localized('Security model')}:</strong> {localized('Cloud auth and secrets handled by the cloud service; local Forge execution is separate from remote cloud operations.')}</p>
+                  <p><strong>{localized('License')}:</strong> {localized('Proprietary — Copyright © 2026 Origins Software Limited. Not open source. Reverse engineering, redistribution, and commercial exploitation restricted without written authorization.')}</p>
+                </div>
+
+                <div className="nexus-ad-actions">
+                  <button className="button button-primary premium-btn" onClick={() => setShowNexusAd(false)}>
+                    {localized('Close & View Site')} <span className="button-arrow icon-smooth" aria-hidden="true">↗</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
       <SiteFooter/>
 
       {/* --- PREMIUM STYLES --- */}
@@ -476,19 +579,19 @@ export default function PremiumLanding() {
         .showcase-orbit-one { width: 100px; height: 100px; top: -14px; right: -20px; }
         .showcase-orbit-two { width: 58px; height: 58px; top: 7px; right: 1px; border-color: rgba(205,220,57,.2); }
 
-        /* TECHNOLOGY PARTNERS */
-        .ecosystem-section { position: relative; padding: 3.5rem 0 4rem; border-bottom: 1px solid var(--surface-border); margin-bottom: 1rem; background: linear-gradient(180deg, rgba(255,255,255,.012), transparent); }
-        .ecosystem-title { margin: 0 0 1.6rem; opacity: .8; font-size: .7rem; }
-        .partner-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-        .partner-group { display: grid; grid-template-columns: minmax(105px, .3fr) 1fr; align-items: center; gap: 1rem; padding: 1.25rem 1.4rem; border: 1px solid var(--surface-border); background: linear-gradient(135deg, rgba(255,255,255,.035), rgba(255,255,255,.008)); transition: border-color .25s ease, transform .25s ease; }
-        .partner-group:hover { border-color: rgba(205,220,57,.28); transform: translateY(-2px); }
-        .partner-group-label { margin: 0; color: #8fa2aa; font: 8px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
-        .partner-chip-list { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-        .partner-chip { display: inline-flex; align-items: center; gap: .55rem; padding: .42rem .72rem; border: 1px solid rgba(169,188,199,.14); color: #d4dde1; background: rgba(4,15,19,.5); font-size: .75rem; font-weight: 500; white-space: nowrap; transition: color .2s ease, border-color .2s ease, background .2s ease; }
-        .partner-chip-icon { width: 18px; height: 18px; flex: 0 0 auto; object-fit: contain; filter: brightness(0) invert(.88); }
-        .partner-chip-icon-copilot { filter: none; }
-        .partner-chip:hover { color: var(--lime); border-color: rgba(205,220,57,.4); background: rgba(205,220,57,.055); }
-
+        /* IDENTITY LAYOUT (Vision, Mission, Principles) */
+        .identity-layout { display: flex; flex-direction: column; gap: 1.25rem; }
+        .identity-grid-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
+        .identity-card, .identity-card-full { min-height: auto; padding: 2.5rem; justify-content: flex-start; }
+        .identity-card .card-title, .identity-card-full .card-title { font-size: 1.8rem; margin-bottom: 1rem; font-weight: 500; }
+        .identity-card .card-text { font-size: 1.05rem; color: #dce4e8; line-height: 1.7; }
+        
+        .principles-mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+        .mini-principle { padding: 1.25rem; border-left: 2px solid var(--lime); background: rgba(255,255,255,0.02); border-radius: 0 6px 6px 0; line-height: 1.6; }
+        .mini-principle strong { color: #fff; font-size: 1.05rem; font-weight: 500; }
+        .mini-principle .principle-separator { color: var(--lime); margin: 0 0.3rem; opacity: 0.8; }
+        .mini-principle span { color: var(--text-secondary); font-size: 0.95rem; }
+        
         .tight-section { padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
         .premium-h2 { font-size: clamp(2.2rem, 4vw, 4rem); letter-spacing: -.045em; }
         .bento-card { position: relative; overflow: hidden; border-color: rgba(169,188,199,.12); background: linear-gradient(145deg, rgba(15,35,42,.72), rgba(6,16,20,.9)); }
